@@ -71,12 +71,31 @@ public class EDF {
 //		return latestReleasedBefore;
 //	}
 	
+	public static Schedule generateRandomSchedule (int numTasks, long minPeriod, long maxPeriod) {
+		/*
+		 * This function generates a random schedule with the predefined number of Tasks
+		 */
+		PeriodicTaskSet pts = Essence.generateRandomTaskSet(numTasks, Essence.randomBigDecimalFromRange(new BigDecimal("30.000"), new BigDecimal("90.000")), 
+				Essence.randomBigDecimalFromRange(new BigDecimal("90.000"), new BigDecimal("100.000")), 
+				minPeriod, maxPeriod, 1);
+		
+		Schedule s = new Schedule();
+		try {
+			s = Essence.schedule(pts, 0, 10*maxPeriod, true, jobList -> EDF.hasHighestPriority(jobList));
+		} catch (Exception e) {
+			
+		}
+		
+		
+		return s;
+	}
 	
-	
-	public static PeriodicTaskSet generateSameDeadline (long numTasks, BigDecimal fromTime, BigDecimal toTime) {
+	public static PeriodicTaskSet generateSameDeadline (long numTasks, long  fromTime, long  toTime) {
 		/*
 		 * This function generates a task set which , when scheduled, will have at least two tasks with the same deadline
 		 */
+		
+		
 		
 		return new PeriodicTaskSet();
 	}

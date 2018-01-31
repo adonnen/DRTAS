@@ -146,7 +146,7 @@ public class RMS {
 		return s;
 	}
 	
-	public static PeriodicTaskSet generateFullUtil (long numTasks, BigDecimal fromTime, BigDecimal toTime) {
+	public static PeriodicTaskSet generateFullUtil (long numTasks, long  fromTime, long  toTime) {
 		/*
 		 * This function generates a task set which totally utilizes the processor but still has idle times in the schedule
 		 */
