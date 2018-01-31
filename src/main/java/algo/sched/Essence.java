@@ -174,8 +174,7 @@ public final class Essence {
 		/*
 		 * This function generates a random schedule with the predefined number of Tasks
 		 */
-		PeriodicTaskSet pts;
-		BigDecimal utilization; 		
+		PeriodicTaskSet pts; 		
 		ArrayList<BigDecimal> utilizationsList;
 		
 		boolean wrongUtil;
@@ -184,34 +183,18 @@ public final class Essence {
 		
 		do {
 			pts = new PeriodicTaskSet();
-			utilizationsList = new ArrayList<BigDecimal>();
-			utilization = randomBigDecimalFromRange(minUtilization, maxUtilization).setScale(3, RoundingMode.DOWN);
-			
-			// for correction checking
 			wrongUtil = false;
 			zeroExTimeTask = false;
 			
-//			System.out.println("Aimed at utilization: " + utilization);
 			
-			Random r = new Random();
-			int sum = 0;
-			
-			for (int i = 1; i <= numTasks; i++) {
-		        if (i != numTasks) {
-		        		int temp = r.nextInt((utilization.intValue() - sum) / (numTasks - i)) + 1;
-		        		utilizationsList.add(new BigDecimal(temp));
-		            sum += temp;
-		        } else
-		            utilizationsList.add(new BigDecimal(utilization.intValue() - sum));
-		    }
-			
+			utilizationsList = generateUtilizations(numTasks, minUtilization, maxUtilization);							
 			System.out.println(utilizationsList);
 			
 			try {
 				for (int i = 1; i <= utilizationsList.size(); i++) 
 					pts.addPTask(generateRandomTask(i, utilizationsList.get(i-1).divide(HUNDRED), minPeriod, maxPeriod));
 			} catch (Exception e) {
-				System.out.printf("wtf!!!");
+				System.out.println("wtf!!!");
 			}
 			
 			// if the resulting util lies outside of the acceptable scope, regenerate the task set
@@ -282,6 +265,36 @@ public final class Essence {
 		return new PeriodicTask("Task" + id, bestNominator, 0, bestDenominator, 0, bestDenominator, id);
 	}
 	
+	public static PeriodicTask generateRandomTask(int id, BigDecimal utilization, long period) {
+		/*
+		 * This function generates a random task with the given utilization
+		 * For that, first, the period is computed, which lies between two time points
+		 * Then, the right execution time is computed and the task is generated
+		 * The task has no explicit starting time, phase, and the relative deadline is equal to the period
+		 */
+		
+		long bestNominator = 0;
+		long denom = period;
+		BigDecimal maxUtil = BigDecimal.ZERO;
+		
+		for (long nom = 1; nom <= period / utilization.longValue(); nom++){
+				BigDecimal currentUtil = new BigDecimal((double) nom / denom).setScale(3, RoundingMode.HALF_UP);
+				if (currentUtil.compareTo(maxUtil) > 0 && currentUtil.compareTo(utilization) <= 0) {
+//					System.out.println(currentUtil);
+//					System.out.println("current " + nom + " " + denom);
+//					System.out.println("best " + bestNominator + " " + bestDenominator);
+					maxUtil = currentUtil;
+					bestNominator = nom;
+				}
+					
+			}
+				
+			
+//		System.out.println("For u = " + utilization + " the period is " + bestDenominator + " and ex time is " + bestNominator);
+		
+		return new PeriodicTask("Task" + id, bestNominator, 0, denom, 0, denom, id);
+	}
+	
 	
 	public static long totalIdleTime(Schedule s) {
 		/*
@@ -340,6 +353,28 @@ public final class Essence {
 	}
 	
 	
+	public static ArrayList<BigDecimal> generateUtilizations (int numTasks, BigDecimal minUtilization, BigDecimal maxUtilization) {
+		ArrayList<BigDecimal> utilizationsList = new ArrayList<BigDecimal>();
+		BigDecimal utilization = randomBigDecimalFromRange(minUtilization, maxUtilization).setScale(3, RoundingMode.DOWN);
+		
+//		System.out.println("Aimed at utilization: " + utilization);
+
+		int sum = 0;
+		Random r = new Random();
+		
+		
+		for (int i = 1; i <= numTasks; i++) {
+	        if (i != numTasks) {
+	        		int temp = r.nextInt((utilization.intValue() - sum) / (numTasks - i)) + 1;
+	        		utilizationsList.add(new BigDecimal(temp));
+	            sum += temp;
+	        } else
+	            utilizationsList.add(new BigDecimal(utilization.intValue() - sum));
+	    }
+		
+		return utilizationsList;
+	}
+	
 	/*
 	 * Math
 	 */
@@ -380,7 +415,7 @@ public final class Essence {
 	}
 	
 	
-	private static long lcm(long a, long b) {
+	public static long lcm(long a, long b) {
 	    return a * (b / gcd(a, b));
 	}
 	

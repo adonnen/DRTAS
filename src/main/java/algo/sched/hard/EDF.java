@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Random;
 
 import ds.*;
 import algo.sched.*;
@@ -90,14 +91,12 @@ public class EDF {
 		return s;
 	}
 	
-	public static PeriodicTaskSet generateSameDeadline (long numTasks, long  fromTime, long  toTime) {
+	public static PeriodicTaskSet generateSameDeadline (int numTasks, long minPeriod, long maxPeriod, boolean idTieBreaker) {
 		/*
 		 * This function generates a task set which , when scheduled, will have at least two tasks with the same deadline
 		 */
 		
-		
-		
-		return new PeriodicTaskSet();
+		return EDF.generateTieBreaker(numTasks, minPeriod, maxPeriod, false);
 	}
 	
 	public static PeriodicTaskSet generateSameDeadlineSameRT (int numTasks, long minPeriod, long maxPeriod) {
@@ -105,7 +104,7 @@ public class EDF {
 		 * This function generates a task set which , when scheduled, will have at least two tasks with the same deadline and the same release time
 		 */
 		
-		return new PeriodicTaskSet();
+		return EDF.generateTieBreaker(numTasks, minPeriod, maxPeriod, true);
 	}
 	
 	public static boolean isValid(Schedule edfSchedule) {
@@ -143,6 +142,77 @@ public class EDF {
 		Schedule validEDFSchedule = new Schedule();
 		
 		return validEDFSchedule;
+	}
+	
+	
+	private static PeriodicTaskSet generateTieBreaker (int numTasks, long minPeriod, long maxPeriod, boolean idTieBreaker) {
+		/*
+		 * This function generates a task set which , when scheduled, will have at least two tasks with the same deadline
+		 */
+		
+		// numtasks must be >= 2
+		// determine, how many equals I may have: at least two, at most all of the tasks
+		// randomize utilization/extime for them
+		// 
+		// 
+		
+		PeriodicTaskSet pts;
+		BigDecimal utilization; 		
+		ArrayList<BigDecimal> utilizationsList;
+		
+		boolean wrongUtil;
+		boolean zeroExTimeTask;
+		int numAttempts = 100;
+		
+		Random r = new Random();
+		
+		
+		do {
+			pts = new PeriodicTaskSet();
+									
+			// for correction checking
+			wrongUtil = false;
+			zeroExTimeTask = false;
+			
+			utilizationsList = Essence.generateUtilizations(numTasks, new BigDecimal("50.000"), new BigDecimal("100.000"));
+			System.out.println(utilizationsList);
+			
+			long numTasksWithSamePeriod = Essence.generateRandomInteger(2, numTasks, r);
+			long equalPeriod = Essence.generateRandomInteger(minPeriod, maxPeriod, r);
+			
+			try {
+				for (int i = 1; i <= utilizationsList.size(); ++i)
+					if (i <= numTasksWithSamePeriod) {
+						if (idTieBreaker)
+							pts.addPTask(Essence.generateRandomTask(i, utilizationsList.get(i-1).divide(Essence.HUNDRED), equalPeriod));
+						else 
+							pts.addPTask(Essence.generateRandomTask(i, utilizationsList.get(i-1).divide(Essence.HUNDRED), 
+									equalPeriod* r.nextInt((int) ((100L < maxPeriod/equalPeriod) ?  100 : maxPeriod/equalPeriod))));
+					} 
+					else
+						pts.addPTask(Essence.generateRandomTask(i, utilizationsList.get(i-1).divide(Essence.HUNDRED), minPeriod, maxPeriod));
+			} catch (Exception e) {
+				System.out.printf("wtf!!!");
+			}
+			
+			// if the resulting util lies outside of the acceptable scope, regenerate the task set
+			BigDecimal resultingUtil = pts.utilizaton();
+			if (resultingUtil.compareTo(BigDecimal.ONE) > 0) wrongUtil = true;
+			
+			// if the resulting task set has a task with utilization == 0, redo
+			for (PeriodicTask p : pts.getpTaskSet().values())
+				if (p.getWcet() == 0) zeroExTimeTask = true;
+			
+			
+//			System.out.println("Resulting utilization: " + resultingUtil);
+			
+//			for (int i = 0; i < utilizationsList.size(); i++)
+//				if (utilizationsList.get(i).compareTo(BigDecimal.ZERO) == 0) containsZero = true;
+			
+			numAttempts--;
+		} while ((wrongUtil || zeroExTimeTask) && numAttempts > 0);
+
+		return pts;
 	}
 
 }

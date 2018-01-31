@@ -5,6 +5,8 @@ import java.math.RoundingMode;
 import java.math.MathContext;
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.Random;
+
 import ds.*;
 import algo.sched.*;
 import exceptions.*;
@@ -146,12 +148,77 @@ public class RMS {
 		return s;
 	}
 	
-	public static PeriodicTaskSet generateFullUtil (long numTasks, long  fromTime, long  toTime) {
+	public static PeriodicTaskSet generateFullUtilTaskSet (long numTasks, long minPeriod, long maxPeriod) {
 		/*
 		 * This function generates a task set which totally utilizes the processor but still has idle times in the schedule
 		 */
 		
+		
+		
 		return new PeriodicTaskSet();
+	}
+	
+	public static PeriodicTaskSet generateHarmonicTaskSet (int numTasks, long minPeriod, long maxPeriod) {
+		/*
+		 * This function generates a harmonic task set
+		 */
+		PeriodicTaskSet pts;
+		ArrayList<Long> harmonicPeriods = new ArrayList<Long>();
+		ArrayList<BigDecimal> utilizationsList;
+		
+		Random r = new Random();
+				
+		long newPeriod = Essence.generateRandomInteger(minPeriod, maxPeriod, r);
+		harmonicPeriods.add(newPeriod);
+		for (int i = 1; i < numTasks; ++i) {
+			
+			long lcmOfExistingPeriods = newPeriod;
+			for (long num : harmonicPeriods)
+				lcmOfExistingPeriods = Essence.lcm(lcmOfExistingPeriods, num);
+			
+			newPeriod = 	lcmOfExistingPeriods * Essence.generateRandomInteger(1, (maxPeriod/lcmOfExistingPeriods > 1) ? maxPeriod/lcmOfExistingPeriods : 1, r);	
+			harmonicPeriods.add(newPeriod);
+		}
+		
+		boolean wrongUtil;
+		boolean zeroExTimeTask;
+		int numAttempts = 100;
+				
+		do {
+			pts = new PeriodicTaskSet();
+			wrongUtil = false;
+			zeroExTimeTask = false;
+			
+			
+			utilizationsList = Essence.generateUtilizations(numTasks, new BigDecimal("50.000"), new BigDecimal(100.00));							
+			System.out.println(utilizationsList);
+			
+			try {
+				for (int i = 1; i <= utilizationsList.size(); i++) 
+					pts.addPTask(Essence.generateRandomTask(i, utilizationsList.get(i-1).divide(Essence.HUNDRED), harmonicPeriods.get(i-1)));
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+			
+			// if the resulting util lies outside of the acceptable scope, regenerate the task set
+			BigDecimal resultingUtil = pts.utilizaton();
+			if (resultingUtil.compareTo(BigDecimal.ONE) > 0) wrongUtil = true;
+			
+			// if the resulting task set has a task with utilization == 0, redo
+			for (PeriodicTask p : pts.getpTaskSet().values())
+				if (p.getWcet() == 0) zeroExTimeTask = true;
+			
+			
+//			System.out.println("Resulting utilization: " + resultingUtil);
+			
+//			for (int i = 0; i < utilizationsList.size(); i++)
+//				if (utilizationsList.get(i).compareTo(BigDecimal.ZERO) == 0) containsZero = true;
+			
+			numAttempts--;
+		} while ((wrongUtil || zeroExTimeTask) && numAttempts > 0 && !RMS.isSchedulable(pts));
+
+		return pts;
+		
 	}
 	
 	public static PeriodicTaskSet generateGreyZoneTaskSet (int numTasks, long minPeriod, long maxPeriod) {
