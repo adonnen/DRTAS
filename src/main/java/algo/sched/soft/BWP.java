@@ -1,4 +1,4 @@
-package algo.sched;
+package algo.sched.soft;
 
 public class BWP {
 

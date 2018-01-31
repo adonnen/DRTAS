@@ -2,6 +2,7 @@ package demos.sched.edf;
 
 import algo.sched.*;
 import algo.sched.Essence;
+import algo.sched.hard.EDF;
 import ds.PeriodicTask;
 import ds.PeriodicTaskSet;
 import ds.Schedule;

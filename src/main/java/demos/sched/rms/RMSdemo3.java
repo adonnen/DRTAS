@@ -1,7 +1,7 @@
 package demos.sched.rms;
 
 import algo.sched.Essence;
-import algo.sched.RMS;
+import algo.sched.hard.RMS;
 import ds.PeriodicTask;
 import ds.PeriodicTaskSet;
 import ds.Schedule;

@@ -1,6 +1,8 @@
 package demos.sched;
 
 import algo.sched.*;
+import algo.sched.hard.EDF;
+import algo.sched.hard.RMS;
 import ds.*;
 
 public class generateDifferentDemo {

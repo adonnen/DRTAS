@@ -1,4 +1,4 @@
-package algo.sched;
+package algo.sched.hard;
 
 import java.util.ArrayList;
 import java.math.RoundingMode;
@@ -6,6 +6,7 @@ import java.math.MathContext;
 import java.math.BigDecimal;
 import java.util.Optional;
 import ds.*;
+import algo.sched.*;
 import exceptions.*;
 
 public class RMS {

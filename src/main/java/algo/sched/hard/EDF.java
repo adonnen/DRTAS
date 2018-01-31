@@ -1,4 +1,4 @@
-package algo.sched;
+package algo.sched.hard;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

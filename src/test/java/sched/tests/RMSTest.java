@@ -4,8 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 //import java.math.BigDecimal;
 //import static org.junit.Assert.*;
 import org.junit.jupiter.api.Test;
+
+import algo.sched.hard.RMS;
 import ds.*;
-import algo.sched.RMS;
 
 class RMSTest {
 	

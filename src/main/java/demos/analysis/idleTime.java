@@ -2,8 +2,8 @@ package demos.analysis;
 
 import java.math.BigDecimal;
 import ds.*;
-import algo.sched.RMS;
 import algo.sched.Essence;
+import algo.sched.hard.RMS;
 import ds.PeriodicTaskSet;
 import exceptions.ViolatedDeadlineException;
 

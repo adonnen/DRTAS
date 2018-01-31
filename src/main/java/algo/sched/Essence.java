@@ -3,6 +3,10 @@ package algo.sched;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.function.Function;
+
+import algo.sched.hard.EDF;
+import algo.sched.hard.RMS;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
