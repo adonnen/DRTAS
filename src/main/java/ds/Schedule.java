@@ -29,17 +29,19 @@ public class Schedule {
 		 * - the job is not scheduled before it is released
 		 * - the job is not scheduled after its deadline
 		 */
+		if (sched.isEmpty()) return true;
+		
 		ScheduleUnit []schedArray = new ScheduleUnit[sched.size()];
 		schedArray = this.getSched().toArray(schedArray);
 		
 		for (int i = 0; i < this.getSched().size()-1; ++i)
 			if (schedArray[i].endTime > schedArray[i+1].startTime
 					|| schedArray[i].startTime > schedArray[i].endTime
-					|| schedArray[i].job.getReleaseTime() > schedArray[i+1].startTime 
-					|| schedArray[i].job.getAbsoluteDeadline() < schedArray[i+1].endTime ) 
+					|| schedArray[i].job.getReleaseTime() > schedArray[i].startTime 
+					|| schedArray[i].job.getAbsoluteDeadline() < schedArray[i].endTime ) 
 				return false;
 		
-		return (schedArray[getSched().size()-1].startTime > schedArray[getSched().size()-1].endTime);
+		return (schedArray[getSched().size()-1].startTime <= schedArray[getSched().size()-1].endTime);
 	}
 	
 	public long howManyContextSwitches() {

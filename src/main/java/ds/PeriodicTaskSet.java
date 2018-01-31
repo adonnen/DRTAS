@@ -83,11 +83,7 @@ public class PeriodicTaskSet {
 		
 		for (PeriodicTask t : sortedTasks) {
 			t.setPrio(prio);
-
-			if (fromTime < t.getStartingTime())
-				jobList.addAll(t.generateJobs(t.getStartingTime(), toTime));
-			else jobList.addAll(t.generateJobs(fromTime, toTime));
-						
+			jobList.addAll(t.generateJobs(t.getStartingTime(), toTime));						
 			prio--;
 		}			
 		

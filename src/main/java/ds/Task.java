@@ -1,11 +1,11 @@
 package ds;
 
 public abstract class Task {
-	private long wcet;
-	private long startingTime;
-	private long id;
-	private long prio;
-	private String name;
+	protected long wcet;
+	protected long startingTime;
+	protected long id;
+	protected long prio;
+	protected String name;
 
 	public Task() {
 		this.wcet = 0;

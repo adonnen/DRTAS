@@ -102,8 +102,8 @@ public class PeriodicTask extends Task {
 		return skipFactor;
 	}
 
-	public void setSkipFactor(Optional<Integer> skipFactor) {
-		this.skipFactor = skipFactor;
+	public void setSkipFactor(int skipFactor) {
+		this.skipFactor = Optional.of(skipFactor);
 	}
 	
 	public void addResourceRequirement(ResourceRequirement newRequirement) {
@@ -143,17 +143,16 @@ public class PeriodicTask extends Task {
 		 */
 		ArrayList<Job> taskInstances = new ArrayList<Job>();
 		long jobId = 1;
+		long time;
 		
-		fromTime = Essence.max(this.getStartingTime(), fromTime);
+		for (time = this.startingTime; time + this.period < fromTime; time += this.period);
 
-		while (fromTime < toTime) {
-			Job taskInstance = new Job(fromTime, fromTime + relativeDeadline, this.getWcet(), this.getId(), jobId);
-			taskInstance.setPrio(this.getPrio());
+		while (time <= toTime) {
+			Job taskInstance = new Job(time, time + relativeDeadline, this.wcet, this.id, jobId);
+			taskInstance.setPrio(this.prio);
 			taskInstances.add(taskInstance);
-			fromTime += period;
 			
-			
-			
+			time += period;			
 			jobId++;
 		}
 		

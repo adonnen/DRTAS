@@ -27,5 +27,16 @@ class PeriodicTaskTest {
 	    }
 	}
 	
+	@Test
+	void generatingJobsTest() {		
+		PeriodicTask pt = new PeriodicTask("test", 5, 0, 20, 0, 20, 1);
+		assertEquals(pt.generateJobs(0, 20).size(), 2);
+		assertEquals(pt.generateJobs(0, 21).size(), 2);
+		assertEquals(pt.generateJobs(0, 0).size(), 1);
+		assertEquals(pt.generateJobs(10, 19).size(), 1);
+		assertEquals(pt.generateJobs(10, 20).size(), 2);
+		assertEquals(pt.generateJobs(22, 22).size(), 1);
+		assertEquals(pt.generateJobs(0, 200).size(), 11);
+	}
 
 }
