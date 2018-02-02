@@ -68,7 +68,34 @@ class EssenceTest {
 
 	}
 	
+	@Test
+	void generateRandomTaskTest() {
+		
+		assertTrue(Essence.generateRandomTask(1, new BigDecimal("1.000"), 5, 6).utilization().compareTo(BigDecimal.ONE) <= 0);
+		assertTrue(Essence.generateRandomTask(1, new BigDecimal("0.860"), 5, 15).utilization().compareTo(new BigDecimal("0.860")) <= 0);
+		assertTrue(Essence.generateRandomTask(1, new BigDecimal("0.869"), 5, 25).utilization().compareTo(new BigDecimal("0.869")) <= 0);
+		
+		
+		System.out.println("Best utilization was " + Essence.generateRandomTask(1, new BigDecimal("1.000"), 5, 6).utilization());		
+		System.out.println("Best utilization was " + Essence.generateRandomTask(1, new BigDecimal("0.860"), 5, 15).utilization());		
+		System.out.println("Best utilization was " + Essence.generateRandomTask(1, new BigDecimal("0.869"), 5, 25).utilization());
+	}
 	
+	
+	@Test
+	void generateFullUtilTest() {
+		System.out.println("Full Util Generation Test:");
+		long time = System.nanoTime();
+		PeriodicTaskSet result = Essence.generateTaskSetWithUtilONE(3, 3, 15);
+		time = System.nanoTime() - time;
+		
+		System.out.println("Elapsed time is " + (double) time / 1000000000.0 + "s");
+		
+		System.out.println(result);
+		System.out.println("Resulting utilization: " + result.utilizaton());
+		
+		assertTrue(BigDecimal.ONE.subtract(result.utilizaton()).compareTo(new BigDecimal ("0.005")) <= 0);
+	}
 
 
 }
