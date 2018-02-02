@@ -6,6 +6,8 @@ import java.math.RoundingMode;
 import java.util.*;
 import exceptions.*;
 
+import algo.sched.Essence;
+
 public class PeriodicTaskSet {
 	private static MathContext mc = new MathContext(3, RoundingMode.HALF_UP);
 	private HashMap<Long, PeriodicTask> pTaskSet;
@@ -121,6 +123,22 @@ public class PeriodicTaskSet {
 		}
 		
 		return totalUtilization;
+	}
+	
+	public long hyperPeriod() {
+		if (this.pTaskSet.size() == 0) return 0;
+		
+//		System.out.println("hello");
+		ArrayList<PeriodicTask> ptArrayList = new ArrayList<PeriodicTask>();
+		ptArrayList.addAll(this.pTaskSet.values());
+//		System.out.println(ptArrayList);
+		long result = ptArrayList.get(0).getPeriod();
+		
+		for (PeriodicTask p : ptArrayList) 
+			result = Essence.lcm(result, p.getPeriod());
+		
+		return result;
+		
 	}
 	
 }

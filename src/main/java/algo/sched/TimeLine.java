@@ -9,7 +9,7 @@ public class TimeLine {
 	
 	public static ArrayList<Long> computeFeasibleFrameSizes(PeriodicTaskSet pts) {
 		long maximumExecTime; 
-		long hyperPeriod = Essence.hyperPeriod(pts);
+		long hyperPeriod = pts.hyperPeriod();
 		ArrayList<Long> feasibleFrameSizes;
 		
 		int maxAttempts = 10;

@@ -22,22 +22,7 @@ public final class Essence {
 	public static BigDecimal HUNDRED = BigDecimal.TEN.multiply(BigDecimal.TEN);
 	public static Schedule schedule;
 	
-	public static long hyperPeriod(PeriodicTaskSet pts) {
-		if (pts.getpTaskSet().size() == 0) return 0;
-		
-//		System.out.println("hello");
-		ArrayList<PeriodicTask> ptArrayList = new ArrayList<PeriodicTask>();
-		ptArrayList.addAll(pts.getpTaskSet().values());
-//		System.out.println(ptArrayList);
-		long result = ptArrayList.get(0).getPeriod();
-		
-		for (PeriodicTask p : ptArrayList) 
-			result = lcm(result, p.getPeriod());
-		
-		return result;
-		
-	}
-	
+
 	public static long nextEarliestRelease(ArrayList<Job> jobList, long timePoint) {
 		/*
 		 * This function returns the relative offset of the next earliest job release

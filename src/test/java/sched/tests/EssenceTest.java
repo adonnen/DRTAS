@@ -7,7 +7,9 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 
 import algo.sched.Essence;
+import algo.sched.hard.EDF;
 import algo.sched.hard.RMS;
+import ds.PeriodicTask;
 import ds.PeriodicTaskSet;
 import ds.Schedule;
 import exceptions.ViolatedDeadlineException;
@@ -31,16 +33,30 @@ class EssenceTest {
 	
 	@Test
 	void idleTimeTest() {
-		PeriodicTaskSet p = Essence.generateRandomTaskSet(3, new BigDecimal("50.000"), new BigDecimal("100.000"), 10, 100, 1);
+		PeriodicTaskSet p = new PeriodicTaskSet();
+		try {
+			p.addPTask(new PeriodicTask("1", 18, 0, 48, 0, 48, 1));
+			p.addPTask(new PeriodicTask("2", 2, 0, 6, 0, 6, 2));
+			p.addPTask(new PeriodicTask("3", 1, 0, 4, 0, 4, 3));
+		} catch (Exception e) {		
+		}
+		
+		Schedule rmsSchedule = new Schedule();
+		try {
+			rmsSchedule = Essence.schedule(p, 0, 50, true, jobList -> RMS.hasHighestPriority(jobList));
+		} catch (Exception e) {
+		}
 		
 		System.out.println(p);
 		System.out.println("Task set's utilization is " + p.utilizaton());
 		
 		try {
-			Schedule s = Essence.schedule(p, 0, 50, false, jobList -> RMS.hasHighestPriority(jobList));
+			Schedule s = new Schedule();
+			assertEquals(Essence.totalIdleTime(s), 0);
+			s = Essence.schedule(p, 0, 50, false, jobList -> EDF.hasHighestPriority(jobList));
 			System.out.println(s);
 			System.out.println("Total idle time " + Essence.totalIdleTime(s));	
-			assertEquals(Essence.totalIdleTime(s), BigDecimal.ONE.subtract(p.utilizaton()).multiply(new BigDecimal("50.000")).longValue());
+			assertEquals(Essence.totalIdleTime(s), 2);
 		} catch (ViolatedDeadlineException e) {
 			System.out.println(e);
 			System.out.println("Schedule so far:");

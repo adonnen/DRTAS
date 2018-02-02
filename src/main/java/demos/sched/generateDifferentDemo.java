@@ -20,7 +20,7 @@ public class generateDifferentDemo {
 		System.out.println("Total Utilization is " + p.utilizaton());
 		
 		try {
-			System.out.println("Hyperperiod of the task set is " + Essence.hyperPeriod(p));
+			System.out.println("Hyperperiod of the task set is " + p.hyperPeriod());
 			System.out.println("RMS Schedule:");
 			System.out.println(Essence.normalizeSchedule(Essence.schedule(p, 0, 50, true, jobList -> RMS.hasHighestPriority(jobList))));
 			System.out.println("EDF Schedule:");

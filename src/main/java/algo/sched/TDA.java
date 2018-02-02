@@ -106,19 +106,5 @@ public class TDA {
 		return true;
 	}
 	
-	public static boolean isTDASchedulableFX (PeriodicTaskSet pts, boolean showArithmeticSteps) {
-		/*
-		 * This function determines whether a task set is schedulable with the arithmetic TDA
-		 * It simultaneously demonstrates the arithmetic steps of the algorithm in the JavaFX GUI
-		 */
-		return true;
-	}
-	
-	public static void graphicTDAScheduleFX (PeriodicTaskSet pts, boolean showArithmeticSteps) {
-		/*
-		 * This function generates graphical objects for the JavaFX GUI 
-		 * It can simultaneously show the arithmetic steps of the TDA algorithm
-		 */
-	}
 
 }
