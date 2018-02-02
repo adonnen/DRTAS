@@ -10,6 +10,8 @@ class TDATest {
 
 	@Test
 	void timeDemandTestCases() {
+		System.out.println("====================================================================");
+		System.out.println("Testing time demand function: ");
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 		PeriodicTask p1 = new PeriodicTask("1", 15, 0, 48, 0, 48, 1, 1);
 		PeriodicTask p2 = new PeriodicTask("2", 2, 0, 6, 0, 6, 2, 2);
@@ -32,6 +34,8 @@ class TDATest {
 	
 	@Test
 	void TDApositiveSchedulabilityTestCases() {
+		System.out.println("====================================================================");
+		System.out.println("Testing tda schedulability: ");
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 		try {
 			pts.addPTask(new PeriodicTask("1", 16, 0, 48, 0, 48, 1));
@@ -48,6 +52,8 @@ class TDATest {
 	
 	@Test
 	void TDAnegativeSchedulabilityTestCases() {
+		System.out.println("====================================================================");
+		System.out.println("Testing tda negative schedulability: ");
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 		try {
 			pts.addPTask(new PeriodicTask("1", 17, 0, 48, 0, 48, 1));

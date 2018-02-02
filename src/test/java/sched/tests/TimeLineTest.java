@@ -15,6 +15,7 @@ class TimeLineTest {
 
 	@Test
 	void frameSizesWithoutSlicingTest() {
+		System.out.println("====================================================================");
 		System.out.println("Frame Size Computation Test:");
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 		PeriodicTask p1 = new PeriodicTask("1", 1, 0, 15, 0, 14, 1, 1);

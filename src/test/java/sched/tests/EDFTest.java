@@ -16,6 +16,8 @@ class EDFTest {
 
 	@Test
 	void edfSchedule1Tests() {
+		System.out.println("====================================================================");
+		System.out.println("Testing edf 1: ");
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 		try {
 			pts.addPTask(new PeriodicTask("1", 3, 0, 6, 0, 6, 1));
@@ -37,6 +39,8 @@ class EDFTest {
 	
 	@Test
 	void edfSchedule3Tests() {
+		System.out.println("====================================================================");
+		System.out.println("Testing edf 2: ");
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 		try {
 			pts.addPTask(new PeriodicTask("1", 18, 0, 48, 0, 48, 1));

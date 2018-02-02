@@ -18,6 +18,8 @@ class EssenceTest {
 
 	@Test
 	void generateRandomTaskSetTest() {
+		System.out.println("====================================================================");
+		System.out.println("Testing random task set generation: ");
 		long time = System.nanoTime();
 		PeriodicTaskSet p = Essence.generateRandomTaskSet(5, new BigDecimal("50.000"), new BigDecimal("100.000"), 10, 20, 0);
 		time = System.nanoTime() - time;
@@ -33,6 +35,8 @@ class EssenceTest {
 	
 	@Test
 	void idleTimeTest() {
+		System.out.println("====================================================================");
+		System.out.println("Testing idle time computation: ");
 		PeriodicTaskSet p = new PeriodicTaskSet();
 		try {
 			p.addPTask(new PeriodicTask("1", 18, 0, 48, 0, 48, 1));
@@ -45,6 +49,7 @@ class EssenceTest {
 		try {
 			rmsSchedule = Essence.schedule(p, 0, 50, true, jobList -> RMS.hasHighestPriority(jobList));
 		} catch (Exception e) {
+			System.out.println(e);
 		}
 		
 		System.out.println(p);
@@ -70,7 +75,8 @@ class EssenceTest {
 	
 	@Test
 	void generateRandomTaskTest() {
-		
+		System.out.println("====================================================================");
+		System.out.println("Testing random task generation: ");
 		assertTrue(Essence.generateRandomTask(1, new BigDecimal("1.000"), 5, 6).utilization().compareTo(BigDecimal.ONE) <= 0);
 		assertTrue(Essence.generateRandomTask(1, new BigDecimal("0.860"), 5, 15).utilization().compareTo(new BigDecimal("0.860")) <= 0);
 		assertTrue(Essence.generateRandomTask(1, new BigDecimal("0.869"), 5, 25).utilization().compareTo(new BigDecimal("0.869")) <= 0);
@@ -84,7 +90,8 @@ class EssenceTest {
 	
 	@Test
 	void generateFullUtilTest() {
-		System.out.println("Full Util Generation Test:");
+		System.out.println("====================================================================");
+		System.out.println("Testing full utilization task set generation: ");
 		long time = System.nanoTime();
 		PeriodicTaskSet result = Essence.generateTaskSetWithUtilONE(3, 3, 15);
 		time = System.nanoTime() - time;
@@ -95,6 +102,31 @@ class EssenceTest {
 		System.out.println("Resulting utilization: " + result.utilizaton());
 		
 		assertTrue(BigDecimal.ONE.subtract(result.utilizaton()).compareTo(new BigDecimal ("0.005")) <= 0);
+	}
+	
+	
+	@Test
+	void generateDifferentEDFtoRMSTest() {
+		System.out.println("====================================================================");
+		System.out.println("Testing task set with different edf/rms schedules generation: ");
+		long time = System.nanoTime();
+		PeriodicTaskSet p = Essence.generateDifferentEDFtoRMS(3, 3, 15);
+		time = System.nanoTime() - time;
+		
+		System.out.println("Elapsed time is " + (double) time / 1000000000.0 + "s");
+		
+		System.out.println(p);
+		System.out.println("Total Utilization is " + p.utilizaton());
+		
+		try {
+			System.out.println("Hyperperiod of the task set is " + p.hyperPeriod());
+			System.out.println("RMS Schedule:");
+			System.out.println(Essence.normalizeSchedule(Essence.schedule(p, 0, 50, true, jobList -> RMS.hasHighestPriority(jobList))));
+			System.out.println("EDF Schedule:");
+			System.out.println(Essence.normalizeSchedule(Essence.schedule(p, 0, 50, true, jobList -> EDF.hasHighestPriority(jobList))));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 	}
 
 

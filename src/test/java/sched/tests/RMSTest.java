@@ -20,6 +20,8 @@ class RMSTest {
 	
 	@Test
 	void LLValueTest() {
+		System.out.println("====================================================================");
+		System.out.println("Testing liu layland computation: ");
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 		try {
 			pts.addPTask(new PeriodicTask("1", 3, 0, 6, 0, 6, 1));
@@ -47,6 +49,8 @@ class RMSTest {
 
 	@Test
 	void SchedulabilityNegativeLLTests() {
+		System.out.println("====================================================================");
+		System.out.println("Testing negative ll schedulability: ");
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 		try {
 			pts.addPTask(new PeriodicTask("1", 3, 0, 6, 0, 6, 1));
@@ -72,6 +76,8 @@ class RMSTest {
 	
 	@Test
 	void SchedulabilityPositiveLLTests() {
+		System.out.println("====================================================================");
+		System.out.println("Testing positive ll schedulability: ");
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 		try {
 			pts.addPTask(new PeriodicTask("1", 1, 0, 6, 0, 6, 1));
@@ -89,6 +95,8 @@ class RMSTest {
 	
 	@Test
 	void HyperbolicSchedulabilityTests() {
+		System.out.println("====================================================================");
+		System.out.println("Testing hyperbolic schedulability: ");
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 		try {
 			pts.addPTask(new PeriodicTask("1", 1, 0, 6, 0, 6, 1));
@@ -107,6 +115,8 @@ class RMSTest {
 	
 	@Test
 	void harmonicityTests() {
+		System.out.println("====================================================================");
+		System.out.println("Testing harmonicity of a task set: ");
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 		try {
 			pts.addPTask(new PeriodicTask("1", 3, 0, 6, 0, 6, 1));
@@ -139,6 +149,8 @@ class RMSTest {
 	
 	@Test
 	void rmsSchedule1Tests() {
+		System.out.println("====================================================================");
+		System.out.println("Testing rms 1: ");
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 		try {
 			pts.addPTask(new PeriodicTask("1", 3, 0, 6, 0, 6, 1));
@@ -161,6 +173,8 @@ class RMSTest {
 	
 	@Test
 	void rmsSchedule2Tests() {
+		System.out.println("====================================================================");
+		System.out.println("Testing rms 2: ");
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 		try {
 			pts.addPTask(new PeriodicTask("1", 1, 0, 4, 0, 6, 1));
@@ -182,6 +196,8 @@ class RMSTest {
 	
 	@Test
 	void rmsSchedule3Tests() {
+		System.out.println("====================================================================");
+		System.out.println("Testing rms 3: ");
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 		try {
 			pts.addPTask(new PeriodicTask("1", 18, 0, 48, 0, 48, 1));
@@ -203,6 +219,8 @@ class RMSTest {
 	
 	@Test
 	void rmsScheduleAsFarAsTests() {
+		System.out.println("====================================================================");
+		System.out.println("Testing rms as far as possible: ");
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 		try {
 			pts.addPTask(new PeriodicTask("1", 3, 0, 6, 0, 6, 1));
@@ -236,6 +254,8 @@ class RMSTest {
 	
 	@Test
 	void greyZoneGenerationTests() {
+		System.out.println("====================================================================");
+		System.out.println("Testing rms grey zone task set generation: ");
 		long time = System.nanoTime();
 		PeriodicTaskSet pts = RMS.generateGreyZoneTaskSet(4, 5, 15);
 		time = System.nanoTime() - time;
