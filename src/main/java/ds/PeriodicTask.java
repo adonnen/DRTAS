@@ -9,9 +9,9 @@ import algo.sched.Essence;
 
 public class PeriodicTask extends Task {
 	protected static MathContext mc = new MathContext(3, RoundingMode.HALF_UP);
-	protected long period;
-	protected long phase;
-	protected long relativeDeadline;
+	protected int period;
+	protected int phase;
+	protected int relativeDeadline;
 	private Optional<ArrayList<ResourceRequirement>> requiredResources;
 	private Optional<Integer> skipFactor;
 
@@ -24,7 +24,7 @@ public class PeriodicTask extends Task {
 		this.skipFactor = Optional.of(0);
 	}
 
-	public PeriodicTask(String name, long exTime, long startTime, long period, long phase, long relDeadline, long id) {
+	public PeriodicTask(String name, int exTime, int startTime, int period, int phase, int relDeadline, int id) {
 		super(name, exTime, startTime, id);
 		this.period = period;
 		this.phase = phase;
@@ -33,7 +33,7 @@ public class PeriodicTask extends Task {
 		this.skipFactor = Optional.of(0);
 	}
 
-	public PeriodicTask(String name, long exTime, long startTime, long period, long phase, long relDeadline, long id, long priority) {
+	public PeriodicTask(String name, int exTime, int startTime, int period, int phase, int relDeadline, int id, int priority) {
 		super(name, exTime, startTime, id, priority);
 		this.period = period;
 		this.phase = phase;
@@ -42,7 +42,7 @@ public class PeriodicTask extends Task {
 		this.skipFactor = Optional.of(0);
 	}
 	
-	public PeriodicTask(String name, long exTime, long startTime, long period, long phase, long relDeadline, long id, long priority, ArrayList<ResourceRequirement> rr) {
+	public PeriodicTask(String name, int exTime, int startTime, int period, int phase, int relDeadline, int id, int priority, ArrayList<ResourceRequirement> rr) {
 		super(name, exTime, startTime, id, priority);
 		this.period = period;
 		this.phase = phase;
@@ -51,7 +51,7 @@ public class PeriodicTask extends Task {
 		this.skipFactor = Optional.of(0);
 	}
 	
-	public PeriodicTask(String name, long exTime, long startTime, long period, long phase, long relDeadline, long id, long priority, int sp) {
+	public PeriodicTask(String name, int exTime, int startTime, int period, int phase, int relDeadline, int id, int priority, int sp) {
 		super(name, exTime, startTime, id, priority);
 		this.period = period;
 		this.phase = phase;
@@ -70,27 +70,27 @@ public class PeriodicTask extends Task {
 		return (super.toString() + sb.toString());	
 	}
 	
-	public long getPeriod() {
+	public int getPeriod() {
 		return period;
 	}
 
-	public void setPeriod(long period) {
+	public void setPeriod(int period) {
 		this.period = period;
 	}
 
-	public long getPhase() {
+	public int getPhase() {
 		return phase;
 	}
 
-	public void setPhase(long phase) {
+	public void setPhase(int phase) {
 		this.phase = phase;
 	}
 
-	public long getRelativeDeadline() {
+	public int getRelativeDeadline() {
 		return relativeDeadline;
 	}
 
-	public void setRelativeDeadline(long relativeDeadline) {
+	public void setRelativeDeadline(int relativeDeadline) {
 		this.relativeDeadline = relativeDeadline;
 	}
 	
@@ -128,22 +128,22 @@ public class PeriodicTask extends Task {
 		return (new BigDecimal(this.getWcet())).divide(new BigDecimal(this.getPeriod()), mc);
 	}
 	
-	public Job generateNextJob(long timePoint, long nextFreeId) { // shouldn't the task be a parameter as well?
+	public Job generateNextJob(int timePoint, int nextFreeId) { // shouldn't the task be a parameter as well?
 		/*
-		 * This function is needed to generate new jobs as long as scheduling is running (with no time limits)
+		 * This function is needed to generate new jobs as int as scheduling is running (with no time limits)
 		 * Step size of the simulation should be considered here, so that enough jobs of the same task are generated until the next step occurrs
 		 */
 		return new Job(timePoint, timePoint + this.relativeDeadline, this.getWcet(), this.getId(), nextFreeId);
 	}
 	
-	public ArrayList<Job> generateJobs(long fromTime, long toTime) {
+	public ArrayList<Job> generateJobs(int fromTime, int toTime) {
 		/*
 		 * This function generates all of the jobs for a given task from fromTime to toTime
 		 * Priorities are inherited from the tasks. The scheduling algorithm has to take care of the priorities itself!
 		 */
 		ArrayList<Job> taskInstances = new ArrayList<Job>();
-		long jobId = 1;
-		long time;
+		int jobId = 1;
+		int time;
 		
 		for (time = this.startingTime; time + this.period < fromTime; time += this.period);
 

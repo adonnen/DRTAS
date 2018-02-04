@@ -72,7 +72,7 @@ public class EDF {
 //		return latestReleasedBefore;
 //	}
 	
-	public static Schedule generateRandomSchedule (int numTasks, long minPeriod, long maxPeriod) {
+	public static Schedule generateRandomSchedule (int numTasks, int minPeriod, int maxPeriod) {
 		/*
 		 * This function generates a random schedule with the predefined number of Tasks
 		 */
@@ -91,7 +91,7 @@ public class EDF {
 		return s;
 	}
 	
-	public static PeriodicTaskSet generateSameDeadline (int numTasks, long minPeriod, long maxPeriod, boolean idTieBreaker) {
+	public static PeriodicTaskSet generateSameDeadline (int numTasks, int minPeriod, int maxPeriod, boolean idTieBreaker) {
 		/*
 		 * This function generates a task set which , when scheduled, will have at least two tasks with the same deadline
 		 */
@@ -99,7 +99,7 @@ public class EDF {
 		return EDF.generateTieBreaker(numTasks, minPeriod, maxPeriod, false);
 	}
 	
-	public static PeriodicTaskSet generateSameDeadlineSameRT (int numTasks, long minPeriod, long maxPeriod) {
+	public static PeriodicTaskSet generateSameDeadlineSameRT (int numTasks, int minPeriod, int maxPeriod) {
 		/*
 		 * This function generates a task set which , when scheduled, will have at least two tasks with the same deadline and the same release time
 		 */
@@ -145,7 +145,7 @@ public class EDF {
 	}
 	
 	
-	private static PeriodicTaskSet generateTieBreaker (int numTasks, long minPeriod, long maxPeriod, boolean idTieBreaker) {
+	private static PeriodicTaskSet generateTieBreaker (int numTasks, int minPeriod, int maxPeriod, boolean idTieBreaker) {
 		/*
 		 * This function generates a task set which , when scheduled, will have at least two tasks with the same deadline
 		 */
@@ -177,8 +177,8 @@ public class EDF {
 			utilizationsList = Essence.generateUtilizations(numTasks, new BigDecimal("50.000"), new BigDecimal("100.000"));
 			System.out.println(utilizationsList);
 			
-			long numTasksWithSamePeriod = Essence.generateRandomInteger(2, numTasks, r);
-			long equalPeriod = Essence.generateRandomInteger(minPeriod, maxPeriod, r);
+			int numTasksWithSamePeriod = Essence.generateRandomInteger(2, numTasks, r);
+			int equalPeriod = Essence.generateRandomInteger(minPeriod, maxPeriod, r);
 			
 			try {
 				for (int i = 1; i <= utilizationsList.size(); ++i)

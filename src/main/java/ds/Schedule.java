@@ -13,7 +13,7 @@ public class Schedule {
 		return sched;
 	}
 
-	public void add(Job j, long startTime, long endTime, ArrayList<Resource> resources) {
+	public void add(Job j, int startTime, int endTime, ArrayList<Resource> resources) {
 		sched.add(new ScheduleUnit(j, startTime, endTime, resources));
 	}
 	
@@ -44,7 +44,7 @@ public class Schedule {
 		return (schedArray[getSched().size()-1].startTime <= schedArray[getSched().size()-1].endTime);
 	}
 	
-	public long howManyContextSwitches() {
+	public int howManyContextSwitches() {
 		return sched.size();
 	}
 	

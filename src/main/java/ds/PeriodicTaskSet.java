@@ -10,10 +10,10 @@ import algo.sched.Essence;
 
 public class PeriodicTaskSet {
 	private static MathContext mc = new MathContext(3, RoundingMode.HALF_UP);
-	private HashMap<Long, PeriodicTask> pTaskSet;
+	private HashMap<Integer, PeriodicTask> pTaskSet;
 
 	public PeriodicTaskSet(){
-		pTaskSet = new HashMap<Long, PeriodicTask>();
+		pTaskSet = new HashMap<Integer, PeriodicTask>();
 	}
 	
 	@Override
@@ -26,7 +26,7 @@ public class PeriodicTaskSet {
 		return sb.toString();
 	}
 	
-	public HashMap<Long, PeriodicTask> getpTaskSet() {
+	public HashMap<Integer, PeriodicTask> getpTaskSet() {
 		return pTaskSet;
 	}
 	
@@ -44,7 +44,7 @@ public class PeriodicTaskSet {
 		pTaskSet.remove(t.getId());
 	}
 	
-	public ArrayList<Job> generateJobs(long fromTime, long toTime){
+	public ArrayList<Job> generateJobs(int fromTime, int toTime){
 		ArrayList<Job> jobList = new ArrayList<Job>();
 		
 		for (PeriodicTask t : this.getpTaskSet().values()) {
@@ -56,7 +56,7 @@ public class PeriodicTaskSet {
 		return jobList;
 	}
 	
-	public ArrayList<Job> generateJobsWithInheritedFixedPriorities(long fromTime, long toTime){
+	public ArrayList<Job> generateJobsWithInheritedFixedPriorities(int fromTime, int toTime){
 		ArrayList<Job> jobList = new ArrayList<Job>();
 		
 		for (PeriodicTask t : this.getpTaskSet().values()) {
@@ -68,7 +68,7 @@ public class PeriodicTaskSet {
 		return jobList;
 	}
 	
-	public ArrayList<Job> generateJobsWithRMSPriorities(long fromTime, long toTime){
+	public ArrayList<Job> generateJobsWithRMSPriorities(int fromTime, int toTime){
 		/*
 		 * This function generates all of the jobs of the given task set from fromTime to toTime
 		 * The priorities are computed based on the periods of the task set which is therefore first sorted by periods
@@ -78,7 +78,7 @@ public class PeriodicTaskSet {
 		ArrayList<Job> jobList = new ArrayList<Job>();
 		
 		ArrayList<PeriodicTask> sortedTasks = new ArrayList<PeriodicTask>(pTaskSet.values());
-		sortedTasks.sort((o1, o2) -> Long.compare(o1.getPeriod(), o2.getPeriod()));
+		sortedTasks.sort((o1, o2) -> Integer.compare(o1.getPeriod(), o2.getPeriod()));
 		//System.out.println(sortedTasks);
 		
 		int prio = sortedTasks.size();
@@ -92,20 +92,20 @@ public class PeriodicTaskSet {
 		return jobList;
 	}
 	
-	public ArrayList<Long> allReleases(long fromTime, long toTime) {
+	public ArrayList<Integer> allReleases(int fromTime, int toTime) {
 		/*
 		 * This function generates all of the time points when jobs of the given task set are released
 		 * Those can then be used as the time points of preemption and scheduler decisions
 		 * The time points are sorted in ascending order
 		 */
-		Set<Long> releaseTimes = new HashSet<Long>();
+		Set<Integer> releaseTimes = new HashSet<Integer>();
 		
 		ArrayList<Job> jobList = generateJobs(fromTime, toTime);
 		
 		for (Job j : jobList)
 			releaseTimes.add(j.getReleaseTime());
 		
-		ArrayList<Long> sortedTimes = new ArrayList<Long>(releaseTimes);
+		ArrayList<Integer> sortedTimes = new ArrayList<Integer>(releaseTimes);
 		Collections.sort(sortedTimes);
 		
 		return sortedTimes;
@@ -125,14 +125,14 @@ public class PeriodicTaskSet {
 		return totalUtilization;
 	}
 	
-	public long hyperPeriod() {
+	public int hyperPeriod() {
 		if (this.pTaskSet.size() == 0) return 0;
 		
 //		System.out.println("hello");
 		ArrayList<PeriodicTask> ptArrayList = new ArrayList<PeriodicTask>();
 		ptArrayList.addAll(this.pTaskSet.values());
 //		System.out.println(ptArrayList);
-		long result = ptArrayList.get(0).getPeriod();
+		int result = ptArrayList.get(0).getPeriod();
 		
 		for (PeriodicTask p : ptArrayList) 
 			result = Essence.lcm(result, p.getPeriod());

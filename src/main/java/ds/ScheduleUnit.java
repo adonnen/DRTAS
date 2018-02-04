@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 public class ScheduleUnit {
 	public Job job;
-	public long startTime;
-	public long endTime;
+	public int startTime;
+	public int endTime;
 	public Optional<ArrayList<Resource>> takenResources;
 	
 	public ScheduleUnit() {
@@ -16,7 +16,7 @@ public class ScheduleUnit {
 		this.takenResources = Optional.ofNullable(null);
 	}
 		
-	public ScheduleUnit(Job j, long st, long et, ArrayList<Resource> resources) {
+	public ScheduleUnit(Job j, int st, int et, ArrayList<Resource> resources) {
 		this.job = j;
 		this.startTime = st;
 		this.endTime = et;

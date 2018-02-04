@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
-import algo.sched.TimeLine;
+import algo.sched.offline.TimeLine;
 import ds.PeriodicTask;
 import ds.PeriodicTaskSet;
 
@@ -30,7 +30,7 @@ class TimeLineTest {
 		} catch (Exception e) {		
 		}
 		
-		ArrayList<Long> test = new ArrayList<Long>(Arrays.asList(Long.valueOf(3), Long.valueOf(4), Long.valueOf(5), Long.valueOf(6)));
+		ArrayList<Integer> test = new ArrayList<Integer>(Arrays.asList(Integer.valueOf(3), Integer.valueOf(4), Integer.valueOf(5), Integer.valueOf(6)));
 		System.out.println("Frame sizes are: " + TimeLine.computeFeasibleFrameSizes(pts));
 		assertTrue(TimeLine.computeFeasibleFrameSizes(pts).equals(test) );
 	}
@@ -73,7 +73,7 @@ class TimeLineTest {
 		} catch (Exception e) {		
 		}
 		
-//		ArrayList<Long> test = new ArrayList<Long>(Arrays.asList(Long.valueOf(3), Long.valueOf(4), Long.valueOf(5), Long.valueOf(6)));
+//		ArrayList<Integer> test = new ArrayList<Integer>(Arrays.asList(Integer.valueOf(3), Integer.valueOf(4), Integer.valueOf(5), Integer.valueOf(6)));
 //		System.out.println("Frame sizes are: " + TimeLine.computeFeasibleFrameSizes(pts));
 //		assertTrue(TimeLine.computeFeasibleFrameSizes(pts).equals(test) );
 
@@ -95,7 +95,7 @@ class TimeLineTest {
 		} catch (Exception e) {		
 		}
 		
-//		ArrayList<Long> test = new ArrayList<Long>(Arrays.asList(Long.valueOf(3), Long.valueOf(4), Long.valueOf(5), Long.valueOf(6)));
+//		ArrayList<Integer> test = new ArrayList<Integer>(Arrays.asList(Integer.valueOf(3), Integer.valueOf(4), Integer.valueOf(5), Integer.valueOf(6)));
 //		System.out.println("Frame sizes are: " + TimeLine.computeFeasibleFrameSizes(pts));
 //		assertTrue(TimeLine.computeFeasibleFrameSizes(pts).equals(test) );
 

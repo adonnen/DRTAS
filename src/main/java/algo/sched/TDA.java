@@ -11,7 +11,7 @@ import exceptions.*;
 public class TDA {
 	private static MathContext mc = new MathContext(3, RoundingMode.HALF_UP);
 	
-	public static long timeDemandFunction(PeriodicTaskSet pts, PeriodicTask pt, long timePoint) throws IllegalArgumentException, TaskSetTaskNonexistent {
+	public static int timeDemandFunction(PeriodicTaskSet pts, PeriodicTask pt, int timePoint) throws IllegalArgumentException, TaskSetTaskNonexistent {
 		/*
 		 * This function computes the time demand value for the task id from task set pts
 		 * from time point 0 (assuming that all tasks arrive at their critical instances) until time point timePoint.
@@ -19,7 +19,7 @@ public class TDA {
 		 */
 		if (pts == null) throw new IllegalArgumentException("Task list is not existing!");
 		
-		long tdValue = 0;
+		int tdValue = 0;
 				
 		for (PeriodicTask p : pts.getpTaskSet().values()) 
 			if (p.getPrio() > pt.getPrio()) {
@@ -31,7 +31,7 @@ public class TDA {
 					
 //				System.out.println("Number of preemptions at time point " + timePoint + " for task " + pt.getId() + " by task " + p.getId() + " is " + numPreemptions);
 				
-				tdValue += numPreemptions.longValue() * p.getWcet();	
+				tdValue += numPreemptions.intValue() * p.getWcet();	
 //				System.out.println("Time demand due to preemptions is " + tdValue);
 			}
 		
@@ -46,7 +46,7 @@ public class TDA {
 		
 		// Sort the tasks according to their periods
 		ArrayList<PeriodicTask> sortedTasks = new ArrayList<PeriodicTask>(pts.getpTaskSet().values());
-		sortedTasks.sort((o1, o2) -> Long.compare(o1.getPeriod(), o2.getPeriod()));
+		sortedTasks.sort((o1, o2) -> Integer.compare(o1.getPeriod(), o2.getPeriod()));
 		
 		// Assign priorities to tasks according to their periods
 		int prio = sortedTasks.size();
@@ -58,8 +58,8 @@ public class TDA {
 		// For every task in the sorted list
 		for (PeriodicTask p : sortedTasks) {
 			if (showArithmeticSteps) System.out.println(p);
-			long timePoint = 0;
-			long demand = 0;
+			int timePoint = 0;
+			int demand = 0;
 			ArrayList<Job> jobList = null;
 			
 			// create the job list of all the jobs of all the tasks up until the task p's relative deadline

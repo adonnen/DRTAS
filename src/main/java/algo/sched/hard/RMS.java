@@ -108,7 +108,7 @@ public class RMS {
 	}
 	
 		
-//	public static Job jobToExecute(JobSet js, long timePoint) {	
+//	public static Job jobToExecute(JobSet js, int timePoint) {	
 //		/*
 //		 * This function finds an active job which must be executed at the given time point
 //		 * If the job is not executed at the moment, context switch occurs
@@ -129,7 +129,7 @@ public class RMS {
 //		return latestReleasedBefore;
 //	}
 	
-	public static Schedule generateRandomSchedule (int numTasks, long minPeriod, long maxPeriod) {
+	public static Schedule generateRandomSchedule (int numTasks, int minPeriod, int maxPeriod) {
 		/*
 		 * This function generates a random schedule with the predefined number of Tasks
 		 */
@@ -148,7 +148,7 @@ public class RMS {
 		return s;
 	}
 	
-	public static PeriodicTaskSet generateFullUtilTaskSet (long numTasks, long minPeriod, long maxPeriod) {
+	public static PeriodicTaskSet generateFullUtilTaskSet (int numTasks, int minPeriod, int maxPeriod) {
 		/*
 		 * This function generates a task set which totally utilizes the processor but still has idle times in the schedule
 		 */
@@ -158,22 +158,22 @@ public class RMS {
 		return new PeriodicTaskSet();
 	}
 	
-	public static PeriodicTaskSet generateHarmonicTaskSet (int numTasks, long minPeriod, long maxPeriod) {
+	public static PeriodicTaskSet generateHarmonicTaskSet (int numTasks, int minPeriod, int maxPeriod) {
 		/*
 		 * This function generates a harmonic task set
 		 */
 		PeriodicTaskSet pts;
-		ArrayList<Long> harmonicPeriods = new ArrayList<Long>();
+		ArrayList<Integer> harmonicPeriods = new ArrayList<Integer>();
 		ArrayList<BigDecimal> utilizationsList;
 		
 		Random r = new Random();
 				
-		long newPeriod = Essence.generateRandomInteger(minPeriod, maxPeriod, r);
+		int newPeriod = Essence.generateRandomInteger(minPeriod, maxPeriod, r);
 		harmonicPeriods.add(newPeriod);
 		for (int i = 1; i < numTasks; ++i) {
 			
-			long lcmOfExistingPeriods = newPeriod;
-			for (long num : harmonicPeriods)
+			int lcmOfExistingPeriods = newPeriod;
+			for (int num : harmonicPeriods)
 				lcmOfExistingPeriods = Essence.lcm(lcmOfExistingPeriods, num);
 			
 			newPeriod = 	lcmOfExistingPeriods * Essence.generateRandomInteger(1, (maxPeriod/lcmOfExistingPeriods > 1) ? maxPeriod/lcmOfExistingPeriods : 1, r);	
@@ -221,7 +221,7 @@ public class RMS {
 		
 	}
 	
-	public static PeriodicTaskSet generateGreyZoneTaskSet (int numTasks, long minPeriod, long maxPeriod) {
+	public static PeriodicTaskSet generateGreyZoneTaskSet (int numTasks, int minPeriod, int maxPeriod) {
 		/*
 		 * This function generates a task set which violates LL bound, but is still schedulable
 		 */

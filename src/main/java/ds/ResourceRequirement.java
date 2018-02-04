@@ -2,8 +2,8 @@ package ds;
 
 public class ResourceRequirement {
 	public Resource r;
-	public long reqTime;
-	public long reqDuration;
+	public int reqTime;
+	public int reqDuration;
 	
 	public ResourceRequirement() {
 		this.r = new Resource();
@@ -11,7 +11,7 @@ public class ResourceRequirement {
 		this.reqDuration = 0;
 	}
 	
-	public ResourceRequirement(Resource r, long reqTime, long reqDuration) {
+	public ResourceRequirement(Resource r, int reqTime, int reqDuration) {
 		this.r = r;
 		this.reqTime = reqTime;
 		this.reqDuration = reqDuration;

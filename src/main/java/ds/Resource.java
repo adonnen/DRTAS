@@ -5,7 +5,7 @@ import java.util.Optional;
 public class Resource {
 	private String name;
 	private R_STATE state;
-	private Optional<Long> priorityCeiling;
+	private Optional<Integer> priorityCeiling;
 
 
 	Resource() {
@@ -13,7 +13,7 @@ public class Resource {
 		this.state = R_STATE.FREE;
 	}
 	
-	Resource (String name, long id) {
+	Resource (String name, int id) {
 		this.name = name;
 		this.state = R_STATE.FREE;
 	}
@@ -34,11 +34,11 @@ public class Resource {
 		this.state = state;
 	}
 	
-	public Optional<Long> getPriorityCeiling() {
+	public Optional<Integer> getPriorityCeiling() {
 		return priorityCeiling;
 	}
 
-	public void setPriorityCeiling(Long priorityCeiling) {
+	public void setPriorityCeiling(int priorityCeiling) {
 		this.priorityCeiling = Optional.ofNullable(priorityCeiling);
 	}
 	

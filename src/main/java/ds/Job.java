@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public class Job {
-	private long releaseTime;
-	private long absoluteDeadline;
-	private long executionTime;
-	private long prio;
-	private long taskId;
-	private long instanceId;
+	private int releaseTime;
+	private int absoluteDeadline;
+	private int executionTime;
+	private int prio;
+	private int taskId;
+	private int instanceId;
 	private STATE state;
 	private Optional<ArrayList<ResourceRequirement>> requirementInstances;
 
@@ -25,7 +25,7 @@ public class Job {
 		this.requirementInstances = Optional.empty();
 	}
 	
-	public Job(long rTime, long aDeadline, long eTime, long id, long iid){
+	public Job(int rTime, int aDeadline, int eTime, int id, int iid){
 		this.releaseTime = rTime;
 		this.absoluteDeadline = aDeadline;
 		this.executionTime = eTime;
@@ -35,7 +35,7 @@ public class Job {
 		this.requirementInstances = Optional.empty();
 	}
 	
-	public Job(long rTime, long aDeadline, long eTime, long id, long iid, ArrayList<ResourceRequirement> rr){
+	public Job(int rTime, int aDeadline, int eTime, int id, int iid, ArrayList<ResourceRequirement> rr){
 		this.releaseTime = rTime;
 		this.absoluteDeadline = aDeadline;
 		this.executionTime = eTime;
@@ -45,51 +45,51 @@ public class Job {
 		this.requirementInstances = Optional.ofNullable(rr);
 	}
 
-	public long getPrio() {
+	public int getPrio() {
 		return this.prio;
 	}
 
-	public void setPrio(long prio) {
+	public void setPrio(int prio) {
 		this.prio = prio;
 	}
 	
-	public long getReleaseTime() {
+	public int getReleaseTime() {
 		return releaseTime;
 	}
 
-	public void setReleaseTime(long releaseTime) {
+	public void setReleaseTime(int releaseTime) {
 		this.releaseTime = releaseTime;
 	}
 
-	public long getAbsoluteDeadline() {
+	public int getAbsoluteDeadline() {
 		return absoluteDeadline;
 	}
 
-	public void setAbsoluteDeadline(long absoluteDeadline) {
+	public void setAbsoluteDeadline(int absoluteDeadline) {
 		this.absoluteDeadline = absoluteDeadline;
 	}
 
-	public long getExecutionTime() {
+	public int getExecutionTime() {
 		return executionTime;
 	}
 
-	public void setExecutionTime(long executionTime) {
+	public void setExecutionTime(int executionTime) {
 		this.executionTime = executionTime;
 	}
 
-	public long getTaskId() {
+	public int getTaskId() {
 		return taskId;
 	}
 
-	public void setTaskId(long taskId) {
+	public void setTaskId(int taskId) {
 		this.taskId = taskId;
 	}
 
-	public long getInstanceId() {
+	public int getInstanceId() {
 		return instanceId;
 	}
 
-	public void setInstanceId(long instanceId) {
+	public void setInstanceId(int instanceId) {
 		this.instanceId = instanceId;
 	}
 	

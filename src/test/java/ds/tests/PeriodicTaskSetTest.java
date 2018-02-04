@@ -39,7 +39,7 @@ class PeriodicTaskSetTest {
 	void allReleasesnTest() {
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 				
-		assertEquals(new ArrayList<Long>(), pts.allReleases(0, 19), pts.allReleases(0, 19).toString());
+		assertEquals(new ArrayList<Integer>(), pts.allReleases(0, 19), pts.allReleases(0, 19).toString());
 		
 		PeriodicTask pt1 = new PeriodicTask("test", 5, 0, 20, 0, 20, 1);		
 		
@@ -48,8 +48,8 @@ class PeriodicTaskSetTest {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		ArrayList<Long> testTimes = new ArrayList();
-		testTimes.add(0L);
+		ArrayList<Integer> testTimes = new ArrayList();
+		testTimes.add(0);
 		assertEquals(testTimes, pts.allReleases(0, 19), pts.allReleases(0, 19).toString());
 		
 		PeriodicTask pt2 = new PeriodicTask("test", 1, 0, 5, 0, 5, 2);
@@ -58,10 +58,10 @@ class PeriodicTaskSetTest {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		testTimes.add(5L);
-		testTimes.add(10L);
-		testTimes.add(15L);
-		testTimes.add(20L);
+		testTimes.add(5);
+		testTimes.add(10);
+		testTimes.add(15);
+		testTimes.add(20);
 		assertEquals(testTimes, pts.allReleases(0, 20), pts.allReleases(0, 20).toString());
 	}
 	
@@ -69,7 +69,7 @@ class PeriodicTaskSetTest {
 	void generateJobsWithRMSPrioritiesTest() {
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 				
-		assertEquals(new ArrayList<Long>(), pts.generateJobsWithRMSPriorities(0, 0), pts.generateJobsWithRMSPriorities(0, 0).toString());
+		assertEquals(new ArrayList<Integer>(), pts.generateJobsWithRMSPriorities(0, 0), pts.generateJobsWithRMSPriorities(0, 0).toString());
 		
 		PeriodicTask pt1 = new PeriodicTask("test", 5, 0, 20, 0, 20, 1);		
 		

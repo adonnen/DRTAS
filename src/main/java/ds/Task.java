@@ -1,10 +1,10 @@
 package ds;
 
 public abstract class Task {
-	protected long wcet;
-	protected long startingTime;
-	protected long id;
-	protected long prio;
+	protected int wcet;
+	protected int startingTime;
+	protected int id;
+	protected int prio;
 	protected String name;
 
 	public Task() {
@@ -15,14 +15,14 @@ public abstract class Task {
 		this.name = "Default Name";
 	}
 
-	public Task(String taskName, long uWcet, long sTime, long id) {
+	public Task(String taskName, int uWcet, int sTime, int id) {
 		this.name = taskName;
 		this.wcet = uWcet;
 		this.startingTime = sTime;
 		this.id = id;
 	}
 	
-	public Task(String taskName, long uWcet, long sTime, long id, long priority) {
+	public Task(String taskName, int uWcet, int sTime, int id, int priority) {
 		this.name = taskName;
 		this.wcet = uWcet;
 		this.startingTime = sTime;
@@ -43,35 +43,35 @@ public abstract class Task {
 		
 	}
 	
-	public long getWcet() {
+	public int getWcet() {
 		return wcet;
 	}
 
-	public void setWcet(long wcet) {
+	public void setWcet(int wcet) {
 		this.wcet = wcet;
 	}
 	
-	public long getStartingTime() {
+	public int getStartingTime() {
 		return startingTime;
 	}
 
-	public void setStartingTime(long sTime) {
+	public void setStartingTime(int sTime) {
 		this.startingTime = sTime;
 	}
 
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
-	public long getPrio() {
+	public int getPrio() {
 		return prio;
 	}
 
-	public void setPrio(long prio) {
+	public void setPrio(int prio) {
 		this.prio = prio;
 	}
 

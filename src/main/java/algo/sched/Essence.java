@@ -1,6 +1,7 @@
 package algo.sched;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Random;
 import java.util.function.Function;
 
@@ -23,7 +24,7 @@ public final class Essence {
 	public static Schedule schedule;
 	
 
-	public static long nextEarliestRelease(ArrayList<Job> jobList, long timePoint) {
+	public static int nextEarliestRelease(ArrayList<Job> jobList, int timePoint) {
 		/*
 		 * This function returns the relative offset of the next earliest job release
 		 */
@@ -49,7 +50,7 @@ public final class Essence {
 		return false;
 	}
 	
-	public static Schedule schedule(PeriodicTaskSet pts, long fromTime, long toTime, boolean onlyIfSchedulable, Function<ArrayList<Job>, Job> hasHighestPriority) 
+	public static Schedule schedule(PeriodicTaskSet pts, int fromTime, int toTime, boolean onlyIfSchedulable, Function<ArrayList<Job>, Job> hasHighestPriority) 
 			throws NotSchedulableException, InvalidTimeInterval, ViolatedDeadlineException {
 		/*
 		 * This function returns an rms schedule from fromTime to toTime, 
@@ -63,13 +64,12 @@ public final class Essence {
 			throw new InvalidTimeInterval("Scheduling is not possible in such a time interval!");
 		
 		schedule = new Schedule();	
-		ArrayList<Job> totalJobList = pts.generateJobsWithRMSPriorities(fromTime, toTime);		
-		totalJobList.sort((o1, o2) -> Long.compare(o1.getReleaseTime(), o2.getReleaseTime()));
+		ArrayList<Job> totalJobList = generateSortedJobList(pts, fromTime, toTime, (o1, o2) -> Integer.compare(o1.getReleaseTime(), o2.getReleaseTime()));
 //		System.out.println(totalJobList);
 		
 		// Initialize an active job list
 		JobSet activeJobSet = new JobSet();
-		long time = fromTime;
+		int time = fromTime;
 		
 		while (time < toTime) {
 
@@ -90,7 +90,7 @@ public final class Essence {
 					throw new ViolatedDeadlineException("A deadline is violated at time point " + time);
 			}
 			
-			long nextRelease = (Essence.nextEarliestRelease(totalJobList, time) == 0) ? toTime : Essence.nextEarliestRelease(totalJobList, time);
+			int nextRelease = (Essence.nextEarliestRelease(totalJobList, time) == 0) ? toTime : Essence.nextEarliestRelease(totalJobList, time);
 			
 			// select the active job with the highest priority
 			Job currentJob = hasHighestPriority.apply(activeJobSet.getJobList());
@@ -105,7 +105,7 @@ public final class Essence {
 			// if the current job can be completely scheduled before the next release, 
 			// it is safe to schedule it completely and jump to the time point when its execution ends
 			if (currentJob.getExecutionTime() <= nextRelease) {
-				long upperLimit = time + currentJob.getExecutionTime();
+				int upperLimit = time + currentJob.getExecutionTime();
 				schedule.add(currentJob, time, (upperLimit > toTime) ? toTime : upperLimit, null);
 				time = time + currentJob.getExecutionTime();
 				activeJobSet.remove(currentJob);
@@ -155,7 +155,7 @@ public final class Essence {
 		return sNew;
 	}
 	
-	public static PeriodicTaskSet generateRandomTaskSet (int numTasks, BigDecimal minUtilization, BigDecimal maxUtilization, long minPeriod, long maxPeriod, int scale) {
+	public static PeriodicTaskSet generateRandomTaskSet (int numTasks, BigDecimal minUtilization, BigDecimal maxUtilization, int minPeriod, int maxPeriod, int scale) {
 		/*
 		 * This function generates a random schedule with the predefined number of Tasks
 		 */
@@ -202,7 +202,7 @@ public final class Essence {
 		return pts;
 	}
 	
-	public static PeriodicTaskSet generateTaskSetWithUtilONE (int numTasks, long minPeriod, long maxPeriod) {
+	public static PeriodicTaskSet generateTaskSetWithUtilONE (int numTasks, int minPeriod, int maxPeriod) {
 		/*
 		 * This function generates a task set which totally utilizes the processor but still has idle times in the schedule
 		 */
@@ -218,7 +218,7 @@ public final class Essence {
 		return pts;
 	}
 	
-	public static PeriodicTask generateRandomTask(int id, BigDecimal utilization, long minPeriod, long maxPeriod) {
+	public static PeriodicTask generateRandomTask(int id, BigDecimal utilization, int minPeriod, int maxPeriod) {
 		/*
 		 * This function generates a random task with the given utilization
 		 * For that, first, the period is computed, which lies between two time points
@@ -226,12 +226,12 @@ public final class Essence {
 		 * The task has no explicit starting time, phase, and the relative deadline is equal to the period
 		 */
 		
-		long bestNominator = 0;
-		long bestDenominator = minPeriod;
+		int bestNominator = 0;
+		int bestDenominator = minPeriod;
 		BigDecimal maxUtil = BigDecimal.ZERO;
 		
-		for (long nom = 1; nom <= maxPeriod; nom++)
-			for (long denom = max(nom, minPeriod); denom <= maxPeriod; denom++) {
+		for (int nom = 1; nom <= maxPeriod; nom++)
+			for (int denom = max(nom, minPeriod); denom <= maxPeriod; denom++) {
 				BigDecimal currentUtil = new BigDecimal((double) nom / denom).setScale(3, RoundingMode.HALF_UP);
 				if (currentUtil.compareTo(maxUtil) > 0 && currentUtil.compareTo(utilization) <= 0) {
 //					System.out.println(currentUtil);
@@ -250,7 +250,7 @@ public final class Essence {
 		return new PeriodicTask("Task" + id, bestNominator, 0, bestDenominator, 0, bestDenominator, id);
 	}
 	
-	public static PeriodicTask generateRandomTask(int id, BigDecimal utilization, long period) {
+	public static PeriodicTask generateRandomTask(int id, BigDecimal utilization, int period) {
 		/*
 		 * This function generates a random task with the given utilization
 		 * For that, first, the period is computed, which lies between two time points
@@ -258,11 +258,11 @@ public final class Essence {
 		 * The task has no explicit starting time, phase, and the relative deadline is equal to the period
 		 */
 		
-		long bestNominator = 0;
-		long denom = period;
+		int bestNominator = 0;
+		int denom = period;
 		BigDecimal maxUtil = BigDecimal.ZERO;
 		
-		for (long nom = 1; nom <= period / utilization.longValue(); nom++){
+		for (int nom = 1; nom <= period / utilization.intValue(); nom++){
 				BigDecimal currentUtil = new BigDecimal((double) nom / denom).setScale(3, RoundingMode.HALF_UP);
 				if (currentUtil.compareTo(maxUtil) > 0 && currentUtil.compareTo(utilization) <= 0) {
 //					System.out.println(currentUtil);
@@ -280,17 +280,24 @@ public final class Essence {
 		return new PeriodicTask("Task" + id, bestNominator, 0, denom, 0, denom, id);
 	}
 	
+	public static ArrayList<Job> generateSortedJobList (PeriodicTaskSet pts, int fromTime, int toTime, Comparator<Job> c) {
+		ArrayList<Job> totalJobList = pts.generateJobsWithRMSPriorities(0, pts.hyperPeriod()-1);		
+		totalJobList.sort(c);
+		
+		return totalJobList;
+	}
 	
-	public static long totalIdleTime(Schedule s) {
+	
+	public static int totalIdleTime(Schedule s) {
 		/*
 		 * This function returns the total idle time for the generated schedule
 		 */
-		long execTime = 0;
+		int execTime = 0;
 		
 		for (ScheduleUnit su : s.getSched())
 			execTime += su.endTime - su.startTime;
 		
-		long totalTime = 0;
+		int totalTime = 0;
 		try {
 			totalTime = s.getSched().get(s.getSched().size()-1).endTime - (s.getSched().get(0).startTime);
 		} catch (Exception e) {
@@ -302,7 +309,7 @@ public final class Essence {
 	
 	
 	
-	public static PeriodicTaskSet generateDifferentEDFtoRMS (int numTasks, long minPeriod, long maxPeriod) {
+	public static PeriodicTaskSet generateDifferentEDFtoRMS (int numTasks, int minPeriod, int maxPeriod) {
 		
 		PeriodicTaskSet pts = new PeriodicTaskSet();
 		
@@ -328,7 +335,7 @@ public final class Essence {
 		return pts;
 	}
 	
-	public static PeriodicTask findLongesExTimeTask (PeriodicTaskSet pts) {
+	public static PeriodicTask findintesExTimeTask (PeriodicTaskSet pts) {
 		PeriodicTask maxSoFar = new PeriodicTask();
 		
 		for (PeriodicTask p : pts.getpTaskSet().values()) 
@@ -365,16 +372,16 @@ public final class Essence {
 	 */
 	
 	
-	public static long generateRandomInteger(long aStart, long aEnd, Random aRandom){
+	public static int generateRandomInteger(int aStart, int aEnd, Random aRandom){
 	    if (aStart > aEnd) {
-	      long temp = aStart;
+	      int temp = aStart;
 	      aStart = aEnd;
 	      aEnd = temp;
 	    }
 
-	    long range = aEnd - aStart + 1;
+	    int range = aEnd - aStart + 1;
 	    // compute a fraction of the range, 0 <= frac < range
-	    long fraction = (long)(range * aRandom.nextDouble());
+	    int fraction = (int)(range * aRandom.nextDouble());
 	    return (fraction + aStart);    
 	  }
 	
@@ -390,9 +397,9 @@ public final class Essence {
 	}
 	
 	
-	public static long gcd(long a, long b) {
+	public static int gcd(int a, int b) {
 	    while (b > 0) {
-	        long temp = b;
+	        int temp = b;
 	        b = a % b; // % is remainder
 	        a = temp;
 	    }
@@ -400,15 +407,15 @@ public final class Essence {
 	}
 	
 	
-	public static long lcm(long a, long b) {
+	public static int lcm(int a, int b) {
 	    return a * (b / gcd(a, b));
 	}
 	
-	public static long max(long a, long b) {
+	public static int max(int a, int b) {
 		return (a > b) ? a : b;
 	}
 	
-	public static long min(long a, long b) {
+	public static int min(int a, int b) {
 		return (a < b) ? a : b;
 	}
 	
