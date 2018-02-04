@@ -149,10 +149,14 @@ public class TimeLine {
 		int totalSize = totalJobList.size() + hyperPeriod/frameSize + 2;
 		System.out.println(totalJobList.size());
 		System.out.println(hyperPeriod/frameSize);
-//		System.out.println(totalJobList);
+		System.out.println(totalJobList);
 		
 		
-		fn = new FlowNetwork(totalSize);		
+		fn = new FlowNetwork(totalSize);	
+		fn.numFrames = hyperPeriod/frameSize;
+		fn.numJobs = totalJobList.size();
+		fn.sink = fn.numFrames + fn.numJobs + 1;
+		fn.source = 0;
 
 		for (int i = 1; i <= totalJobList.size(); ++i) {
 			fn.residualGraph[0][i] = totalJobList.get(i-1).getExecutionTime();
@@ -193,21 +197,35 @@ public class TimeLine {
 		Collections.sort(totalJobList, (o1, o2) -> Integer.compare(o1.getTaskId(), o2.getTaskId()));
 		System.out.println(totalJobList);
 		ArrayList<Integer> frameSizes = computeFeasibleFrameSizes(pts);
+		FlowNetwork fn;
+		Flow f;
 		
 		int maxAttempts = 10;
 		
-//		do {
-//			// construct flow network
-//			FlowNetwork fn = constructFlowNetwork(totalJobList, hyperPeriod, frameSizes);
-//			
-//			// compute flow
-//			
-//			// if not schedulable, use the next frame size
-//			
-//			// if no other frame sizes, do job slicing and retry
-//			
-//			// construct schedule from the flow network and return
-//		} while (maxAttempts > 0);
+		do {
+			// construct flow network
+			for (int size : frameSizes) {
+				fn = constructFlowNetwork(totalJobList, hyperPeriod, size);
+				
+				try {
+					f = MaxFlow.fordFulkerson(fn, fn.numFrames + fn.numJobs + 2);
+				} catch (Exception e) {
+					continue;
+				}
+				
+				if (isFullyMapped(totalJobList, f)) break;
+				
+			}
+			
+			
+			// compute flow
+			
+			// if not schedulable, use the next frame size
+			
+			// if no other frame sizes, do job slicing and retry
+			
+			// construct schedule from the flow network and return
+		} while (maxAttempts > 0);
 		
 		return new Schedule();
 		
@@ -222,6 +240,10 @@ public class TimeLine {
 			if (p.getId() > highestId) highestId = p.getId();
 			
 		return highestId + 1;
+	}
+	
+	private static boolean isFullyMapped (ArrayList<Job> jobList, Flow f ) {
+		return true;
 	}
 	
 
