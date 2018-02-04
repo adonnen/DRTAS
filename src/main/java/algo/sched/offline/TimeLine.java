@@ -2,6 +2,7 @@ package algo.sched.offline;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import ds.*;
 import exceptions.*;
@@ -58,35 +59,35 @@ public class TimeLine {
 		
 		PeriodicTaskSet ptsNew = new PeriodicTaskSet();
 		
-		PeriodicTask intestExTimeTask = Essence.findintesExTimeTask(pts);
+		PeriodicTask longestExTimeTask = Essence.findLongestExTimeTask(pts);
 //		System.out.println("intest task is: " + intestExTimeTask);
 		try {
-			pts.removeTask(intestExTimeTask);
+			pts.removeTask(longestExTimeTask);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 		 
 		// find the best value for the new ex time
-		int newWcet = intestExTimeTask.getWcet();
+		int newWcet = longestExTimeTask.getWcet();
 		
 		for (PeriodicTask p : pts.getpTaskSet().values())
 			newWcet += p.getWcet();
 		
 		newWcet /= (pts.getpTaskSet().size() + 1);
 		// if all the tasks have the same ex time, reduce it
-		if (newWcet == intestExTimeTask.getWcet()) newWcet /= 2;
+		if (newWcet == longestExTimeTask.getWcet()) newWcet /= 2;
 		
 		
 		int freeId = nextFreeHighestId(pts);
 		int index = 1;
 		
-		while (intestExTimeTask.getWcet() >= newWcet) {
-			PeriodicTask pNew = new PeriodicTask(intestExTimeTask.getName() + index, 
+		while (longestExTimeTask.getWcet() >= newWcet) {
+			PeriodicTask pNew = new PeriodicTask(longestExTimeTask.getName() + index, 
 												 newWcet, 
-												 intestExTimeTask.getStartingTime(),
-												 intestExTimeTask.getPeriod(),
-												 intestExTimeTask.getPhase(),
-												 intestExTimeTask.getRelativeDeadline(),
+												 longestExTimeTask.getStartingTime(),
+												 longestExTimeTask.getPeriod(),
+												 longestExTimeTask.getPhase(),
+												 longestExTimeTask.getRelativeDeadline(),
 												 freeId);
 			
 			try {
@@ -95,18 +96,18 @@ public class TimeLine {
 				System.out.println(e);
 			}
 			
-			intestExTimeTask.setWcet(intestExTimeTask.getWcet()-newWcet);			
+			longestExTimeTask.setWcet(longestExTimeTask.getWcet()-newWcet);			
 			freeId++;
 			index++;
 		}
 		
-		if (intestExTimeTask.getWcet() > 0) {
-			PeriodicTask pNew = new PeriodicTask(intestExTimeTask.getName() + index, 
-												 intestExTimeTask.getWcet(), 
-												 intestExTimeTask.getStartingTime(),
-												 intestExTimeTask.getPeriod(),
-												 intestExTimeTask.getPhase(),
-												 intestExTimeTask.getRelativeDeadline(),
+		if (longestExTimeTask.getWcet() > 0) {
+			PeriodicTask pNew = new PeriodicTask(longestExTimeTask.getName() + index, 
+												 longestExTimeTask.getWcet(), 
+												 longestExTimeTask.getStartingTime(),
+												 longestExTimeTask.getPeriod(),
+												 longestExTimeTask.getPhase(),
+												 longestExTimeTask.getRelativeDeadline(),
 												 freeId);
 
 			try {
@@ -134,7 +135,7 @@ public class TimeLine {
 		return ptsNew;
 	} 
 	
-	public static FlowNetwork constructFlowNetwork (PeriodicTaskSet pts) throws NotSchedulableException {
+	public static FlowNetwork constructFlowNetwork (ArrayList<Job> totalJobList, int hyperPeriod, int frameSize) {
 		/*
 		 * Flow network graph will have the following structure:
 		 * first line : source to other nodes
@@ -142,24 +143,38 @@ public class TimeLine {
 		 * lines numOfJobs+1 - numOfJobs+numOfFrames : mappings from frames to the sink
 		 * last line : sink
 		 */
-		if (pts.utilizaton().compareTo(BigDecimal.ONE) > 0) throw new NotSchedulableException("The given task set is not schedulable!");
 		
 		FlowNetwork fn;
 		
-		int hyperPeriod = pts.hyperPeriod();
+		int totalSize = totalJobList.size() + hyperPeriod/frameSize + 2;
+		System.out.println(totalJobList.size());
+		System.out.println(hyperPeriod/frameSize);
+//		System.out.println(totalJobList);
 		
-		ArrayList<Job> totalJobList = Essence.generateSortedJobList(pts, 0, hyperPeriod-1, (o1, o2) -> Integer.compare(o1.getTaskId(), o2.getTaskId()));
 		
-		ArrayList<Integer> frameSizes = computeFeasibleFrameSizes(pts);
-		
-		for (int fs : frameSizes ) {
-			fn = new FlowNetwork(totalJobList.size() + fs + 2);
-			
-			
+		fn = new FlowNetwork(totalSize);		
+
+		for (int i = 1; i <= totalJobList.size(); ++i) {
+			fn.residualGraph[0][i] = totalJobList.get(i-1).getExecutionTime();
 		}
 		
+		ArrayList<Frame> frameList = new ArrayList<Frame>();
+		for (int i = 0; i < hyperPeriod/frameSize; ++i)
+			frameList.add(new Frame(i * frameSize, (i+1) * frameSize));
 		
+		for (Job j : totalJobList)
+			for (Frame f : frameList)
+				if (j.getReleaseTime() <= f.start &&  f.end <= j.getAbsoluteDeadline())
+					fn.residualGraph[totalJobList.indexOf(j)+1][totalJobList.size()+1+frameList.indexOf(f)] = frameSize;
+
+		for (int i = 1; i <= frameList.size(); ++i)
+			fn.residualGraph[totalJobList.size()+i][totalSize-1] = frameSize;
 		
+		for (int i = 0; i < totalSize; ++i) {
+			for (int j = 0; j < totalSize; ++j)
+				System.out.print(fn.residualGraph[i][j] + " ");
+			System.out.println();
+		}
 		
 		return fn;
 	}
@@ -167,6 +182,35 @@ public class TimeLine {
 	public static boolean isValidFlowNetwork (FlowNetwork fn) {
 		
 		return true;
+	}
+	
+	public static Schedule schedule (PeriodicTaskSet pts) throws NotSchedulableException {
+		
+		if (pts.utilizaton().compareTo(BigDecimal.ONE) > 0) throw new NotSchedulableException("The given task set is not schedulable!");
+		
+		int hyperPeriod = pts.hyperPeriod();
+		ArrayList<Job> totalJobList = Essence.generateSortedJobList(pts, 0, hyperPeriod-1, (o1, o2) -> Integer.compare(o1.getInstanceId(), o2.getInstanceId()));
+		Collections.sort(totalJobList, (o1, o2) -> Integer.compare(o1.getTaskId(), o2.getTaskId()));
+		System.out.println(totalJobList);
+		ArrayList<Integer> frameSizes = computeFeasibleFrameSizes(pts);
+		
+		int maxAttempts = 10;
+		
+//		do {
+//			// construct flow network
+//			FlowNetwork fn = constructFlowNetwork(totalJobList, hyperPeriod, frameSizes);
+//			
+//			// compute flow
+//			
+//			// if not schedulable, use the next frame size
+//			
+//			// if no other frame sizes, do job slicing and retry
+//			
+//			// construct schedule from the flow network and return
+//		} while (maxAttempts > 0);
+		
+		return new Schedule();
+		
 	}
 	
 	

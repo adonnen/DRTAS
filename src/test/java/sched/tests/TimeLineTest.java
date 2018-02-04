@@ -96,9 +96,36 @@ class TimeLineTest {
 		}
 		
 //		ArrayList<Integer> test = new ArrayList<Integer>(Arrays.asList(Integer.valueOf(3), Integer.valueOf(4), Integer.valueOf(5), Integer.valueOf(6)));
-//		System.out.println("Frame sizes are: " + TimeLine.computeFeasibleFrameSizes(pts));
+		System.out.println("Frame sizes before slicing are: " + TimeLine.computeFeasibleFrameSizes(pts));
 //		assertTrue(TimeLine.computeFeasibleFrameSizes(pts).equals(test) );
-
+		pts = TimeLine.jobSlicing(pts);
+		System.out.println("Frame sizes after slicing are: " + TimeLine.computeFeasibleFrameSizes(pts));
+		pts = TimeLine.jobSlicing(pts);
+		System.out.println("Frame sizes after slicing are: " + TimeLine.computeFeasibleFrameSizes(pts));
+	}
+	
+	@Test
+	void constructingNetworkFlowTest1() {
+		System.out.println("====================================================================");
+		System.out.println("Constructing Network Flow 1st Test:");
+		PeriodicTaskSet pts = new PeriodicTaskSet();
+		PeriodicTask p1 = new PeriodicTask("1", 30, 0, 40, 0, 40, 1, 1);
+		PeriodicTask p2 = new PeriodicTask("2", 15, 0, 60, 0, 60, 2, 2);
+		try {		
+			pts.addPTask(p1);
+			pts.addPTask(p2);
+			
+		} catch (Exception e) {		
+		}
+		
+		System.out.println("Frame sizes are: " + TimeLine.computeFeasibleFrameSizes(pts));
+		TimeLine.constructFlowNetwork(pts.generateJobs(0, pts.hyperPeriod()-1), pts.hyperPeriod(), TimeLine.computeFeasibleFrameSizes(pts).get(0));
+		pts = TimeLine.jobSlicing(pts);
+		System.out.println("Frame sizes are: " + TimeLine.computeFeasibleFrameSizes(pts));
+		TimeLine.constructFlowNetwork(pts.generateJobs(0, pts.hyperPeriod()-1), pts.hyperPeriod(), TimeLine.computeFeasibleFrameSizes(pts).get(0));
+		pts = TimeLine.jobSlicing(pts);
+		System.out.println("Frame sizes are: " + TimeLine.computeFeasibleFrameSizes(pts));
+		TimeLine.constructFlowNetwork(pts.generateJobs(0, pts.hyperPeriod()-1), pts.hyperPeriod(), TimeLine.computeFeasibleFrameSizes(pts).get(1));
 	}
 	
 

@@ -335,7 +335,7 @@ public final class Essence {
 		return pts;
 	}
 	
-	public static PeriodicTask findintesExTimeTask (PeriodicTaskSet pts) {
+	public static PeriodicTask findLongestExTimeTask (PeriodicTaskSet pts) {
 		PeriodicTask maxSoFar = new PeriodicTask();
 		
 		for (PeriodicTask p : pts.getpTaskSet().values()) 
