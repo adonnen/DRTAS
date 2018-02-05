@@ -61,7 +61,7 @@ class EssenceTest {
 			s = Essence.schedule(p, 0, 50, false, jobList -> EDF.hasHighestPriority(jobList));
 			System.out.println(s);
 			System.out.println("Total idle time " + Essence.totalIdleTime(s));	
-			assertEquals(Essence.totalIdleTime(s), 2);
+			assertEquals(Essence.totalIdleTime(s), 0);
 		} catch (ViolatedDeadlineException e) {
 			System.out.println(e);
 			System.out.println("Schedule so far:");

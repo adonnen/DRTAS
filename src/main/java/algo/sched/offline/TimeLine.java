@@ -147,9 +147,9 @@ public class TimeLine {
 		FlowNetwork fn;
 		
 		int totalSize = totalJobList.size() + hyperPeriod/frameSize + 2;
-		System.out.println(totalJobList.size());
-		System.out.println(hyperPeriod/frameSize);
-		System.out.println(totalJobList);
+//		System.out.println(totalJobList.size());
+//		System.out.println(hyperPeriod/frameSize);
+//		System.out.println(totalJobList);
 		
 		
 		fn = new FlowNetwork(totalSize);	
@@ -174,11 +174,11 @@ public class TimeLine {
 		for (int i = 1; i <= frameList.size(); ++i)
 			fn.residualGraph[totalJobList.size()+i][totalSize-1] = frameSize;
 		
-		for (int i = 0; i < totalSize; ++i) {
-			for (int j = 0; j < totalSize; ++j)
-				System.out.print(fn.residualGraph[i][j] + " ");
-			System.out.println();
-		}
+//		for (int i = 0; i < totalSize; ++i) {
+//			for (int j = 0; j < totalSize; ++j)
+//				System.out.print(fn.residualGraph[i][j] + "\t");
+//			System.out.println();
+//		}
 		
 		return fn;
 	}
@@ -193,11 +193,10 @@ public class TimeLine {
 		if (pts.utilizaton().compareTo(BigDecimal.ONE) > 0) throw new NotSchedulableException("The given task set is not schedulable!");
 		
 		int hyperPeriod = pts.hyperPeriod();
-		ArrayList<Job> totalJobList = Essence.generateSortedJobList(pts, 0, hyperPeriod-1, (o1, o2) -> Integer.compare(o1.getInstanceId(), o2.getInstanceId()));
-		Collections.sort(totalJobList, (o1, o2) -> Integer.compare(o1.getTaskId(), o2.getTaskId()));
-		System.out.println(totalJobList);
-		ArrayList<Integer> frameSizes = new ArrayList<Integer>();
 		ArrayList<Integer> newFrameSizes = computeFeasibleFrameSizes(pts);
+		
+		ArrayList<Job> totalJobList;		
+		ArrayList<Integer> frameSizes = new ArrayList<Integer>();
 		FlowNetwork fn;
 		Flow f = new Flow();
 		boolean mappingFound;
@@ -206,21 +205,35 @@ public class TimeLine {
 		int maxAttempts = 10;
 		
 		do {
+			totalJobList = Essence.generateSortedJobList(pts, 0, hyperPeriod-1, (o1, o2) -> Integer.compare(o1.getInstanceId(), o2.getInstanceId()));
+			Collections.sort(totalJobList, (o1, o2) -> Integer.compare(o1.getTaskId(), o2.getTaskId()));
+//			System.out.println(totalJobList);
+			
+			
 			mappingFound = false;
 			newFrameSizes.removeAll(frameSizes);
 			
 			// construct flow network
 			while (!newFrameSizes.isEmpty()) {
 				
+//				System.out.println(newFrameSizes);
+				
 				fn = constructFlowNetwork(totalJobList, hyperPeriod, newFrameSizes.get(newFrameSizes.size()-1));
 				
 				try {
-					f = MaxFlow.fordFulkerson(fn, fn.numFrames + fn.numJobs + 2);
+					f = MaxFlow.fordFulkerson(fn);
+//					System.out.println("Flow : ");
+//					for (int i = 0; i < fn.numFrames + fn.numJobs + 2; ++i) {
+//						for (int j = 0; j < fn.numFrames + fn.numJobs + 2; ++j)
+//							System.out.print(f.residualGraph[i][j] + "\t");
+//						System.out.println();	
+//					}
 				} catch (Exception e) {
+					System.out.println(e);
 					continue;
 				}
 				
-				if (isFullyMapped(totalJobList, f)) { 
+				if (isFullyMapped(totalJobList, f, hyperPeriod/newFrameSizes.get(newFrameSizes.size()-1))) { 
 					validFrameSize = newFrameSizes.get(newFrameSizes.size()-1);
 					mappingFound = true; 
 					break; 
@@ -241,11 +254,13 @@ public class TimeLine {
 			// if no other frame sizes, do job slicing and retry
 			
 			// construct schedule from the flow network and return
+			
+			maxAttempts--;
 		} while (!mappingFound && maxAttempts > 0);
 		
 		if (validFrameSize == 0) return new Schedule();
 		
-		return mapFlowToSchedule(f, validFrameSize, totalJobList);
+		return mapFlowToSchedule(f, hyperPeriod/validFrameSize, validFrameSize, totalJobList);
 		
 	}
 
@@ -259,19 +274,34 @@ public class TimeLine {
 	}
 	
 	
-	private static boolean isFullyMapped (ArrayList<Job> jobList, Flow f ) {
-		return true;
+	public static boolean isFullyMapped (ArrayList<Job> jobList, Flow f, int frameNumber) {
+		int sumExecTimes = 0;
+		int sumFlow = 0;
+		
+		for (int i = 0; i < jobList.size(); ++i) 
+			sumExecTimes += jobList.get(i).getExecutionTime();
+		
+		for (int i = 1; i <= jobList.size(); ++i)
+			sumFlow += f.residualGraph[i][0];
+		
+		return (sumFlow == sumExecTimes);
 	}
 	
 	
-	private static Schedule mapFlowToSchedule (Flow f, int frameNumber, ArrayList<Job> jobList) {
-		for (int j = jobList.size(); j <= jobList.size()+frameNumber; ++j)
-			for (int i = 1; i <= jobList.size(); ++i) {
-				if (f.residualGraph[i][j] > 0)
-					s.add(totalJobList[]);
-				
+	private static Schedule mapFlowToSchedule (Flow f, int frameNumber, int frameSize, ArrayList<Job> jobList) {
+		Schedule s = new Schedule();
+		int time = 0;
+		
+		for (int i = 1; i <= frameNumber; ++i) {
+			for (int j = 1; j <= jobList.size(); ++j) 
+				if (f.residualGraph[jobList.size()+i][j] > 0) {
+					s.add(jobList.get(j-1), time, time + f.residualGraph[jobList.size()+i][j], null);
+					time += f.residualGraph[jobList.size()+i][j];
+				}
+					
+			time = (i)*frameSize;				
 		}
-		return new Schedule();
+		return s;
 	}
 	
 

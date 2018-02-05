@@ -50,11 +50,12 @@ public class MaxFlow
 	}
 
 	// Returns the maximum flow 
-	public static Flow fordFulkerson(FlowNetwork fn, int graphDim) throws InvalidFlowNetworkException {
-		if (TimeLine.isValidFlowNetwork(fn)) 
+	public static Flow fordFulkerson(FlowNetwork fn) throws InvalidFlowNetworkException {
+		if (!TimeLine.isValidFlowNetwork(fn)) 
 			throw new InvalidFlowNetworkException("Impossible to apply flow network algorithm in an invalid flow network!");
 		
 		int u, v;
+		int graphDim = fn.numFrames + fn.numJobs + 2;
 
 		// Create a residual graph and fill the residual graph
 		// with given capacities in the original graph as
