@@ -155,6 +155,49 @@ public final class Essence {
 		return sNew;
 	}
 	
+	
+	public static PeriodicTaskSet generateDifferentEDFtoRMS (int numTasks, int minPeriod, int maxPeriod) {
+		
+		PeriodicTaskSet pts = new PeriodicTaskSet();
+		
+		boolean isSame;
+		int maxAttempts = 100;
+
+		do {
+			isSame = false;
+			
+			pts = RMS.generateSchedulableGreyZoneTaskSet(numTasks, minPeriod, maxPeriod);
+			try {
+				Schedule sRMS = schedule(pts, 0, maxPeriod*2, true, jobList -> RMS.hasHighestPriority(jobList));
+				Schedule sEDF = schedule(pts, 0, maxPeriod*2, true, jobList -> EDF.hasHighestPriority(jobList));
+				if (normalizeSchedule(sRMS).equals(normalizeSchedule(sEDF))) isSame = true;
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+			
+			maxAttempts--;
+						
+		} while (isSame && maxAttempts > 0);
+		
+		return pts;
+	}
+	
+
+	public static PeriodicTaskSet generateOppositeEDFtoRMS (int numTasks, int minPeriod, int maxPeriod) {		
+		PeriodicTaskSet pts;
+		BigDecimal bound = RMS.llBound(numTasks).setScale(2, RoundingMode.UP).multiply(Essence.HUNDRED);
+		int maxAttempts = 1000;
+
+		do {
+			pts = Essence.generateRandomTaskSet(numTasks, bound, Essence.HUNDRED, minPeriod, maxPeriod, 1);			
+			maxAttempts--;
+			
+			if (!TDA.isTDASchedulable(pts, false)) return pts;					
+		} while (maxAttempts > 0);
+		
+		return new PeriodicTaskSet();
+	}
+	
 	public static PeriodicTaskSet generateRandomTaskSet (int numTasks, BigDecimal minUtilization, BigDecimal maxUtilization, int minPeriod, int maxPeriod, int scale) {
 		/*
 		 * This function generates a random schedule with the predefined number of Tasks
@@ -307,34 +350,7 @@ public final class Essence {
 		return totalTime - execTime;
 	}
 	
-	
-	
-	public static PeriodicTaskSet generateDifferentEDFtoRMS (int numTasks, int minPeriod, int maxPeriod) {
 		
-		PeriodicTaskSet pts = new PeriodicTaskSet();
-		
-		boolean isSame;
-		int maxAttempts = 100;
-
-		do {
-			isSame = false;
-			
-			pts = RMS.generateGreyZoneTaskSet(numTasks, minPeriod, maxPeriod);
-			try {
-				Schedule sRMS = schedule(pts, 0, maxPeriod*2, true, jobList -> RMS.hasHighestPriority(jobList));
-				Schedule sEDF = schedule(pts, 0, maxPeriod*2, true, jobList -> EDF.hasHighestPriority(jobList));
-				if (normalizeSchedule(sRMS).equals(normalizeSchedule(sEDF))) isSame = true;
-			} catch (Exception e) {
-				System.out.println(e);
-			}
-			
-			maxAttempts--;
-						
-		} while (isSame && maxAttempts > 0);
-		
-		return pts;
-	}
-	
 	public static PeriodicTask findLongestExTimeTask (PeriodicTaskSet pts) {
 		PeriodicTask maxSoFar = new PeriodicTask();
 		
@@ -419,7 +435,4 @@ public final class Essence {
 		return (a < b) ? a : b;
 	}
 	
-
-	
-
 }

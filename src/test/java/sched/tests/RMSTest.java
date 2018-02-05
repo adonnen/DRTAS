@@ -257,7 +257,7 @@ class RMSTest {
 		System.out.println("====================================================================");
 		System.out.println("Testing rms grey zone task set generation: ");
 		long time = System.nanoTime();
-		PeriodicTaskSet pts = RMS.generateGreyZoneTaskSet(4, 5, 15);
+		PeriodicTaskSet pts = RMS.generateSchedulableGreyZoneTaskSet(4, 5, 15);
 		time = System.nanoTime() - time;
 		
 		System.out.println("Elapsed time is " + (double) time / 1000000000.0);

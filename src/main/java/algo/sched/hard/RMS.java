@@ -221,7 +221,7 @@ public class RMS {
 		
 	}
 	
-	public static PeriodicTaskSet generateGreyZoneTaskSet (int numTasks, int minPeriod, int maxPeriod) {
+	public static PeriodicTaskSet generateSchedulableGreyZoneTaskSet (int numTasks, int minPeriod, int maxPeriod) {
 		/*
 		 * This function generates a task set which violates LL bound, but is still schedulable
 		 */
@@ -234,8 +234,7 @@ public class RMS {
 		do {
 			zeroWCET = false;
 			
-			pts = Essence.generateRandomTaskSet(numTasks, 
-					bound, Essence.HUNDRED, minPeriod, maxPeriod, 1);			
+			pts = Essence.generateRandomTaskSet(numTasks, bound, Essence.HUNDRED, minPeriod, maxPeriod, 1);			
 			maxAttempts--;
 			
 			for (PeriodicTask p : pts.getpTaskSet().values())
