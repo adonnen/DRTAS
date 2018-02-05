@@ -196,16 +196,23 @@ public class TimeLine {
 		ArrayList<Job> totalJobList = Essence.generateSortedJobList(pts, 0, hyperPeriod-1, (o1, o2) -> Integer.compare(o1.getInstanceId(), o2.getInstanceId()));
 		Collections.sort(totalJobList, (o1, o2) -> Integer.compare(o1.getTaskId(), o2.getTaskId()));
 		System.out.println(totalJobList);
-		ArrayList<Integer> frameSizes = computeFeasibleFrameSizes(pts);
+		ArrayList<Integer> frameSizes = new ArrayList<Integer>();
+		ArrayList<Integer> newFrameSizes = computeFeasibleFrameSizes(pts);
 		FlowNetwork fn;
-		Flow f;
+		Flow f = new Flow();
+		boolean mappingFound;
+		int validFrameSize = 0;
 		
 		int maxAttempts = 10;
 		
 		do {
+			mappingFound = false;
+			newFrameSizes.removeAll(frameSizes);
+			
 			// construct flow network
-			for (int size : frameSizes) {
-				fn = constructFlowNetwork(totalJobList, hyperPeriod, size);
+			while (!newFrameSizes.isEmpty()) {
+				
+				fn = constructFlowNetwork(totalJobList, hyperPeriod, newFrameSizes.get(newFrameSizes.size()-1));
 				
 				try {
 					f = MaxFlow.fordFulkerson(fn, fn.numFrames + fn.numJobs + 2);
@@ -213,10 +220,19 @@ public class TimeLine {
 					continue;
 				}
 				
-				if (isFullyMapped(totalJobList, f)) break;
+				if (isFullyMapped(totalJobList, f)) { 
+					validFrameSize = newFrameSizes.get(newFrameSizes.size()-1);
+					mappingFound = true; 
+					break; 
+				}
+				
+				newFrameSizes.remove(newFrameSizes.size()-1);
 				
 			}
 			
+			frameSizes = computeFeasibleFrameSizes(pts);
+			pts = TimeLine.jobSlicing(pts);
+			newFrameSizes = computeFeasibleFrameSizes(pts);
 			
 			// compute flow
 			
@@ -225,14 +241,14 @@ public class TimeLine {
 			// if no other frame sizes, do job slicing and retry
 			
 			// construct schedule from the flow network and return
-		} while (maxAttempts > 0);
+		} while (!mappingFound && maxAttempts > 0);
 		
-		return new Schedule();
+		if (validFrameSize == 0) return new Schedule();
+		
+		return mapFlowToSchedule(f, validFrameSize, totalJobList);
 		
 	}
-	
-	
-	
+
 	private static int nextFreeHighestId (PeriodicTaskSet pts) {
 		int highestId = 0;
 		
@@ -242,8 +258,20 @@ public class TimeLine {
 		return highestId + 1;
 	}
 	
+	
 	private static boolean isFullyMapped (ArrayList<Job> jobList, Flow f ) {
 		return true;
+	}
+	
+	
+	private static Schedule mapFlowToSchedule (Flow f, int frameNumber, ArrayList<Job> jobList) {
+		for (int j = jobList.size(); j <= jobList.size()+frameNumber; ++j)
+			for (int i = 1; i <= jobList.size(); ++i) {
+				if (f.residualGraph[i][j] > 0)
+					s.add(totalJobList[]);
+				
+		}
+		return new Schedule();
 	}
 	
 
