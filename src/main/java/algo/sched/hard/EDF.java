@@ -82,7 +82,7 @@ public class EDF {
 		
 		Schedule s = new Schedule();
 		try {
-			s = Essence.schedule(pts, 0, 10*maxPeriod, true, jobList -> EDF.hasHighestPriority(jobList));
+			s = Essence.schedule(pts, 0, 10*maxPeriod, true, jobList -> EDF.hasHighestPriority(jobList), a -> EDF.isSchedulable(a));
 		} catch (Exception e) {
 			
 		}

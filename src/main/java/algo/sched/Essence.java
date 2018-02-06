@@ -50,7 +50,7 @@ public final class Essence {
 		return false;
 	}
 	
-	public static Schedule schedule(PeriodicTaskSet pts, int fromTime, int toTime, boolean onlyIfSchedulable, Function<ArrayList<Job>, Job> hasHighestPriority) 
+	public static Schedule schedule(PeriodicTaskSet pts, int fromTime, int toTime, boolean onlyIfSchedulable, Function<ArrayList<Job>, Job> hasHighestPriority, Function<PeriodicTaskSet, Boolean> schedulabilityTest) 
 			throws NotSchedulableException, InvalidTimeInterval, ViolatedDeadlineException {
 		/*
 		 * This function returns an rms schedule from fromTime to toTime, 
@@ -58,7 +58,7 @@ public final class Essence {
 		 * This is no simulation, it just provides a complete schedule in one step.
 		 */
 		if (onlyIfSchedulable)
-				if (!RMS.isSchedulable(pts)) 
+				if (!schedulabilityTest.apply(pts)) 
 					throw new NotSchedulableException("This task set is not schedulable under RMS!");
 		if (fromTime < 0 || toTime < fromTime || fromTime >= toTime) 
 			throw new InvalidTimeInterval("Scheduling is not possible in such a time interval!");
@@ -168,8 +168,8 @@ public final class Essence {
 			
 			pts = RMS.generateSchedulableGreyZoneTaskSet(numTasks, minPeriod, maxPeriod);
 			try {
-				Schedule sRMS = schedule(pts, 0, maxPeriod*2, true, jobList -> RMS.hasHighestPriority(jobList));
-				Schedule sEDF = schedule(pts, 0, maxPeriod*2, true, jobList -> EDF.hasHighestPriority(jobList));
+				Schedule sRMS = schedule(pts, 0, maxPeriod*2, true, jobList -> RMS.hasHighestPriority(jobList), a -> RMS.isSchedulable(a));
+				Schedule sEDF = schedule(pts, 0, maxPeriod*2, true, jobList -> EDF.hasHighestPriority(jobList), a -> EDF.isSchedulable(a));
 				if (normalizeSchedule(sRMS).equals(normalizeSchedule(sEDF))) isSame = true;
 			} catch (Exception e) {
 				System.out.println(e);

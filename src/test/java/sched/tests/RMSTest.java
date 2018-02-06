@@ -160,7 +160,7 @@ class RMSTest {
 		
 		Schedule rmsSchedule = new Schedule();
 		try {
-			rmsSchedule = Essence.schedule(pts, 0, 60, true, jobList -> RMS.hasHighestPriority(jobList));
+			rmsSchedule = Essence.schedule(pts, 0, 60, true, jobList -> RMS.hasHighestPriority(jobList), a -> RMS.isSchedulable(a));
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -185,7 +185,7 @@ class RMSTest {
 		
 		Schedule rmsSchedule = new Schedule();
 		try {
-			rmsSchedule = Essence.schedule(pts, 0, 60, true, jobList -> RMS.hasHighestPriority(jobList));
+			rmsSchedule = Essence.schedule(pts, 0, 60, true, jobList -> RMS.hasHighestPriority(jobList), a -> RMS.isSchedulable(a));
 		} catch (Exception e) {
 		}
 		
@@ -208,7 +208,7 @@ class RMSTest {
 		
 		Schedule rmsSchedule = new Schedule();
 		try {
-			rmsSchedule = Essence.schedule(pts, 0, 50, true, jobList -> RMS.hasHighestPriority(jobList));
+			rmsSchedule = Essence.schedule(pts, 0, 50, true, jobList -> RMS.hasHighestPriority(jobList), a -> RMS.isSchedulable(a));
 		} catch (Exception e) {
 		}
 		
@@ -236,7 +236,7 @@ class RMSTest {
 		
 		Schedule rmsSchedule = new Schedule();
 		try {
-			rmsSchedule = Essence.schedule(pts, 0, 50, false, jobList -> RMS.hasHighestPriority(jobList));
+			rmsSchedule = Essence.schedule(pts, 0, 50, false, jobList -> RMS.hasHighestPriority(jobList), a -> RMS.isSchedulable(a));
 			System.out.println(rmsSchedule);
 		} catch (ViolatedDeadlineException e) {
 			System.out.println(e);

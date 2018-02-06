@@ -12,6 +12,8 @@ import algo.sched.hard.RMS;
 import ds.PeriodicTask;
 import ds.PeriodicTaskSet;
 import ds.Schedule;
+import exceptions.InvalidTimeInterval;
+import exceptions.NotSchedulableException;
 import exceptions.ViolatedDeadlineException;
 
 class EssenceTest {
@@ -47,7 +49,7 @@ class EssenceTest {
 		
 		Schedule rmsSchedule = new Schedule();
 		try {
-			rmsSchedule = Essence.schedule(p, 0, 50, true, jobList -> RMS.hasHighestPriority(jobList));
+			rmsSchedule = Essence.schedule(p, 0, 50, true, jobList -> RMS.hasHighestPriority(jobList), a -> RMS.isSchedulable(a));
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -58,7 +60,7 @@ class EssenceTest {
 		try {
 			Schedule s = new Schedule();
 			assertEquals(Essence.totalIdleTime(s), 0);
-			s = Essence.schedule(p, 0, 50, false, jobList -> EDF.hasHighestPriority(jobList));
+			s = Essence.schedule(p, 0, 50, false, jobList -> EDF.hasHighestPriority(jobList), a -> EDF.isSchedulable(a));
 			System.out.println(s);
 			System.out.println("Total idle time " + Essence.totalIdleTime(s));	
 			assertEquals(Essence.totalIdleTime(s), 0);
@@ -121,12 +123,52 @@ class EssenceTest {
 		try {
 			System.out.println("Hyperperiod of the task set is " + p.hyperPeriod());
 			System.out.println("RMS Schedule:");
-			System.out.println(Essence.normalizeSchedule(Essence.schedule(p, 0, 50, true, jobList -> RMS.hasHighestPriority(jobList))));
+			System.out.println(Essence.normalizeSchedule(Essence.schedule(p, 0, 50, true, jobList -> RMS.hasHighestPriority(jobList), a -> RMS.isSchedulable(a))));
 			System.out.println("EDF Schedule:");
-			System.out.println(Essence.normalizeSchedule(Essence.schedule(p, 0, 50, true, jobList -> EDF.hasHighestPriority(jobList))));
+			System.out.println(Essence.normalizeSchedule(Essence.schedule(p, 0, 50, true, jobList -> EDF.hasHighestPriority(jobList), a -> EDF.isSchedulable(a))));
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+	}
+	
+	@Test 
+	void generateOppositeEDFtoRMSTest() {
+		System.out.println("====================================================================");
+		System.out.println("Creating a task set not schedulable under RMS but under EDF : ");
+		PeriodicTaskSet pts = Essence.generateOppositeEDFtoRMS(3, 5, 20);
+		
+		System.out.println(pts);
+		System.out.println(pts.utilizaton());
+//		System.out.println(RMS.isLiuLaylandSchedulable(pts));
+//		System.out.println(RMS.isHyperbolicallySchedulable(pts));
+//		System.out.println(TDA.isTDASchedulable(pts, true));
+
+
+		
+		Schedule rmsSchedule = new Schedule();
+		try {
+			rmsSchedule = Essence.schedule(pts, 0, 50, false, jobList -> RMS.hasHighestPriority(jobList), a -> RMS.isSchedulable(a));
+			System.out.println(rmsSchedule);
+		} catch (ViolatedDeadlineException e) {
+			System.out.println(e);
+			System.out.println("Schedule so far:");
+			System.out.println("RMS " + Essence.schedule);
+		} catch (NotSchedulableException e) {
+			System.out.println(e);
+			System.out.println("Failed schedulability tests. If you want to schedule as far as possible, set the onlyIfSchedulable-variable to false.");
+		} catch (InvalidTimeInterval e) {
+			System.out.println(e);
+		}
+		
+		Schedule edfSchedule;
+		
+		try {
+			edfSchedule = Essence.schedule(pts, 0, 50, true, jobList -> EDF.hasHighestPriority(jobList), a -> EDF.isSchedulable(a));
+			System.out.println("EDF " + edfSchedule);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		
 	}
 
 

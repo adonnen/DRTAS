@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import algo.sched.Essence;
 import algo.sched.hard.EDF;
+import algo.sched.hard.RMS;
 import ds.PeriodicTask;
 import ds.PeriodicTaskSet;
 import ds.Schedule;
@@ -27,7 +28,7 @@ class EDFTest {
 		
 		Schedule edfSchedule = new Schedule();
 		try {
-			edfSchedule = Essence.schedule(pts, 0, 60, true, jobList -> EDF.hasHighestPriority(jobList));
+			edfSchedule = Essence.schedule(pts, 0, 60, true, jobList -> EDF.hasHighestPriority(jobList), a -> EDF.isSchedulable(a));
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -51,7 +52,7 @@ class EDFTest {
 		
 		Schedule edfSchedule = new Schedule();
 		try {
-			edfSchedule = Essence.schedule(pts, 0, 50, true, jobList -> EDF.hasHighestPriority(jobList));
+			edfSchedule = Essence.schedule(pts, 0, 50, true, jobList -> EDF.hasHighestPriority(jobList), a -> EDF.isSchedulable(a));
 		} catch (Exception e) {
 		}
 		
