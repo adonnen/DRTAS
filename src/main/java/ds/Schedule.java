@@ -4,13 +4,33 @@ import java.util.*;
 public class Schedule {
 	
 	private ArrayList<ScheduleUnit> sched;
+	private boolean isFullyScheduled;
+	private int violatedTask;
 	
 	public Schedule() {
-		sched = new ArrayList<ScheduleUnit>();
+		this.sched = new ArrayList<ScheduleUnit>();
+		this.isFullyScheduled = true;
+		this.violatedTask = 0;
 	}
 	
 	public ArrayList<ScheduleUnit> getSched() {
 		return sched;
+	}
+	
+	public int getViolatedTask() {
+		return violatedTask;
+	}
+
+	public void setViolatedTask(int violatedTask) {
+		this.violatedTask = violatedTask;
+	}
+	
+	public boolean isFullyScheduled() {
+		return isFullyScheduled;
+	}
+
+	public void setFullyScheduled(boolean isFullyScheduled) {
+		this.isFullyScheduled = isFullyScheduled;
 	}
 
 	public void add(Job j, int startTime, int endTime, ArrayList<Resource> resources) {

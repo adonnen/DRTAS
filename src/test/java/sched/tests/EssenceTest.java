@@ -50,6 +50,8 @@ class EssenceTest {
 		Schedule rmsSchedule = new Schedule();
 		try {
 			rmsSchedule = Essence.schedule(p, 0, 50, true, jobList -> RMS.hasHighestPriority(jobList), a -> RMS.isSchedulable(a));
+			if (!rmsSchedule.isFullyScheduled())
+				System.out.println("A task with id " + rmsSchedule.getViolatedTask() + " violated its deadline at the last time point");
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -64,10 +66,6 @@ class EssenceTest {
 			System.out.println(s);
 			System.out.println("Total idle time " + Essence.totalIdleTime(s));	
 			assertEquals(Essence.totalIdleTime(s), 0);
-		} catch (ViolatedDeadlineException e) {
-			System.out.println(e);
-			System.out.println("Schedule so far:");
-			System.out.println(Essence.schedule);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -149,10 +147,8 @@ class EssenceTest {
 		try {
 			rmsSchedule = Essence.schedule(pts, 0, 50, false, jobList -> RMS.hasHighestPriority(jobList), a -> RMS.isSchedulable(a));
 			System.out.println(rmsSchedule);
-		} catch (ViolatedDeadlineException e) {
-			System.out.println(e);
-			System.out.println("Schedule so far:");
-			System.out.println("RMS " + Essence.schedule);
+			if (!rmsSchedule.isFullyScheduled())
+				System.out.println("A task with id " + rmsSchedule.getViolatedTask() + " violated its deadline at the last time point");
 		} catch (NotSchedulableException e) {
 			System.out.println(e);
 			System.out.println("Failed schedulability tests. If you want to schedule as far as possible, set the onlyIfSchedulable-variable to false.");

@@ -21,7 +21,6 @@ import exceptions.ViolatedDeadlineException;
 public final class Essence {
 	
 	public static BigDecimal HUNDRED = BigDecimal.TEN.multiply(BigDecimal.TEN);
-	public static Schedule schedule;
 	
 
 	public static int nextEarliestRelease(ArrayList<Job> jobList, int timePoint) {
@@ -33,7 +32,7 @@ public final class Essence {
 		
 	}
 	
-	public static boolean twoInstancesActive (ArrayList<Job> jobList) {
+	public static int twoInstancesActive (ArrayList<Job> jobList) {
 		/*
 		 * This function returns true if there are two different instances of the same task
 		 * If task set was not checked to be schedulable, then there is a possibility of deadline violation during scheduling
@@ -45,13 +44,13 @@ public final class Essence {
 		for (Job j1 : jobList)
 			for (Job j2 : jobList)
 				if (j1.getTaskId() == j2.getTaskId() && j1.getInstanceId() != j2.getInstanceId())
-					return true;
+					return j1.getTaskId();
 		
-		return false;
+		return 0;
 	}
 	
 	public static Schedule schedule(PeriodicTaskSet pts, int fromTime, int toTime, boolean onlyIfSchedulable, Function<ArrayList<Job>, Job> hasHighestPriority, Function<PeriodicTaskSet, Boolean> schedulabilityTest) 
-			throws NotSchedulableException, InvalidTimeInterval, ViolatedDeadlineException {
+			throws NotSchedulableException, InvalidTimeInterval {
 		/*
 		 * This function returns an rms schedule from fromTime to toTime, 
 		 * where all of the jobs are generated from the periodic task set pts.
@@ -63,7 +62,7 @@ public final class Essence {
 		if (fromTime < 0 || toTime < fromTime || fromTime >= toTime) 
 			throw new InvalidTimeInterval("Scheduling is not possible in such a time interval!");
 		
-		schedule = new Schedule();	
+		Schedule schedule = new Schedule();	
 		ArrayList<Job> totalJobList = generateSortedJobList(pts, fromTime, toTime, (o1, o2) -> Integer.compare(o1.getReleaseTime(), o2.getReleaseTime()));
 //		System.out.println(totalJobList);
 		
@@ -86,8 +85,13 @@ public final class Essence {
 			// If task set was not checked to be schedulable, then there is a possibility of deadline violation during scheduling
 			// Every time a new task instance arrives, the active job set is checked if there are two different instances of the same task
 			if (!onlyIfSchedulable) {
-				if (Essence.twoInstancesActive(activeJobSet.getJobList()))
-					throw new ViolatedDeadlineException("A deadline is violated at time point " + time);
+				int violatingTaskId = Essence.twoInstancesActive(activeJobSet.getJobList());
+				if (violatingTaskId != 0) {
+					schedule.setFullyScheduled(false);
+					schedule.setViolatedTask(violatingTaskId);
+					return schedule;
+				}
+					//throw new ViolatedDeadlineException("A deadline is violated at time point " + time);
 			}
 			
 			int nextRelease = (Essence.nextEarliestRelease(totalJobList, time) == 0) ? toTime : Essence.nextEarliestRelease(totalJobList, time);

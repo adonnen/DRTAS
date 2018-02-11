@@ -238,11 +238,8 @@ class RMSTest {
 		try {
 			rmsSchedule = Essence.schedule(pts, 0, 50, false, jobList -> RMS.hasHighestPriority(jobList), a -> RMS.isSchedulable(a));
 			System.out.println(rmsSchedule);
-		} catch (ViolatedDeadlineException e) {
-			System.out.println(e);
-			assertEquals(e.getMessage(), "A deadline is violated at time point 10");
-			System.out.println("Schedule so far:");
-			System.out.println(Essence.schedule);
+			if (!rmsSchedule.isFullyScheduled())
+				System.out.println("A task with id " + rmsSchedule.getViolatedTask() + " violated its deadline at the last time point");
 		} catch (NotSchedulableException e) {
 			System.out.println(e);
 			System.out.println("Failed schedulability tests. If you want to schedule as far as possible, set the onlyIfSchedulable-variable to false.");
