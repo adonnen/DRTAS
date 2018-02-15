@@ -1,6 +1,7 @@
 package algo.sched.hard;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.math.RoundingMode;
 import java.math.MathContext;
 import java.math.BigDecimal;
@@ -148,14 +149,43 @@ public class RMS {
 		return s;
 	}
 	
-	public static PeriodicTaskSet generateFullUtilTaskSet (int numTasks, int minPeriod, int maxPeriod) {
+	public static PeriodicTaskSet generateHardToScheduleTaskSet (int numTasks, int minPeriod, int maxPeriod) {
 		/*
 		 * This function generates a task set which totally utilizes the processor but still has idle times in the schedule
 		 */
+		if (maxPeriod-minPeriod+1 < numTasks || minPeriod <= 0 || maxPeriod <= 0) return new PeriodicTaskSet();
+				
+		ArrayList<Integer> periods = new ArrayList<Integer>();		
+		Random r = new Random();		
+		periods.add(Essence.generateRandomInteger(minPeriod, maxPeriod-numTasks+1, r));		
+		int remaining = periods.get(0);
+		int lastOne = 0;
 		
+		for (int i = 1; i < numTasks; ++i) {
+			periods.add(periods.get(i-1)+r.nextInt(remaining - lastOne) / (numTasks-i)+1);
+			lastOne += periods.get(i)-periods.get(i-1);
+		}
 		
+		System.out.println(periods);
+		PeriodicTaskSet pts = new PeriodicTaskSet();		
 		
-		return new PeriodicTaskSet();
+		for (int i = 0; i < numTasks-1; ++i) {
+			try {
+				int exTime = periods.get(i+1)-periods.get(i);
+				pts.addPTask(new PeriodicTask("Task"+i, exTime, 0, periods.get(i), 0, periods.get(i), i+1));
+				
+			} catch (Exception e) {
+				System.out.println(e);
+			}			
+		}
+		
+		try {
+			pts.addPTask(new PeriodicTask("Task"+numTasks, periods.get(numTasks-1)-lastOne*2, 0, periods.get(numTasks-1), 0, periods.get(numTasks-1), numTasks));		
+		} catch (Exception e) {
+			System.out.println(e);
+		}	
+		
+		return pts;
 	}
 	
 	public static PeriodicTaskSet generateHarmonicTaskSet (int numTasks, int minPeriod, int maxPeriod) {

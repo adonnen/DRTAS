@@ -1,6 +1,7 @@
 package algo.sched;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Random;
 import java.util.function.Function;
@@ -328,6 +329,10 @@ public final class Essence {
 	}
 	
 	public static ArrayList<Job> generateSortedJobList (PeriodicTaskSet pts, int fromTime, int toTime, Comparator<Job> c) {
+		/*
+		 * This function GENERATE A JOB LIST WITH FIXED RMS PRIORITIES AND IS USED IN THE CASE OF EDF TOO!
+		 * 
+		 */
 		ArrayList<Job> totalJobList = pts.generateJobsWithRMSPriorities(0, pts.hyperPeriod()-1);		
 		totalJobList.sort(c);
 		
@@ -385,6 +390,18 @@ public final class Essence {
 	    }
 		
 		return utilizationsList;
+	}
+	
+	
+	public static ArrayList<Integer> generateListOfInts (int numTasks, int minNumber, int maxNumber) {
+		ArrayList<Integer> intsList = new ArrayList<Integer>();
+		
+		Random r = new Random();
+		
+		for (int i = 0; i < numTasks; ++i)
+			intsList.add(generateRandomInteger(minNumber, maxNumber, r));	
+		
+		return intsList;
 	}
 	
 	/*
