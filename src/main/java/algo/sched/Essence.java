@@ -359,6 +359,13 @@ public final class Essence {
 		return totalTime - execTime;
 	}
 	
+	public static int isFullyUtiliziedUntil(Schedule s) {
+		/*
+		 * This function returns the first idle time of the schedule
+		 */
+		return 0;
+	}
+	
 		
 	public static PeriodicTask findLongestExTimeTask (PeriodicTaskSet pts) {
 		PeriodicTask maxSoFar = new PeriodicTask();

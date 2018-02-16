@@ -157,12 +157,14 @@ public class RMS {
 				
 		ArrayList<Integer> periods = new ArrayList<Integer>();		
 		Random r = new Random();		
-		periods.add(Essence.generateRandomInteger(minPeriod, maxPeriod-numTasks+1, r));		
-		int remaining = periods.get(0);
+		periods.add(Essence.generateRandomInteger((minPeriod < numTasks) ? numTasks : minPeriod, maxPeriod-numTasks+1, r));		
 		int lastOne = 0;
 		
 		for (int i = 1; i < numTasks; ++i) {
-			periods.add(periods.get(i-1)+r.nextInt(remaining - lastOne) / (numTasks-i)+1);
+//			System.out.print(periods.get(i-1)+1);
+//			System.out.print(" ");
+//			System.out.println(periods.get(i-1)+periods.get(0) - lastOne - numTasks + i - 1);
+			periods.add(Essence.generateRandomInteger(periods.get(i-1)+1, Essence.min(maxPeriod-numTasks+i+1, periods.get(i-1)+periods.get(0) - lastOne - numTasks + i ), r));
 			lastOne += periods.get(i)-periods.get(i-1);
 		}
 		
