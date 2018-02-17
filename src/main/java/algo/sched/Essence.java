@@ -306,7 +306,7 @@ public final class Essence {
 		 * The task has no explicit starting time, phase, and the relative deadline is equal to the period
 		 */
 		
-		int bestNominator = 0;
+		int bestNominator = 1;
 		int denom = period;
 		BigDecimal maxUtil = BigDecimal.ZERO;
 		
@@ -363,6 +363,13 @@ public final class Essence {
 		/*
 		 * This function returns the first idle time of the schedule
 		 */
+		if (!s.isValid()) return 0;
+		
+		if (s.getSched().get(0).startTime != 0) return 0;
+		
+		for (int i = 0; i < s.getSched().size()-1; ++i)
+			if (s.getSched().get(i).endTime < s.getSched().get(i+1).startTime) return s.getSched().get(i).endTime;
+		
 		return 0;
 	}
 	

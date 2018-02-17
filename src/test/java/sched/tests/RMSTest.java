@@ -275,63 +275,60 @@ class RMSTest {
 //	}
 	
 	
-	@Test
-	void generateHardToScheduleTests() {
-		System.out.println("====================================================================");
-		System.out.println("Testing hard to schedule task set generation: ");
-		long time = System.nanoTime();
-		PeriodicTaskSet pts = RMS.generateHardToScheduleTaskSet(5, 5, 25);
-		time = System.nanoTime() - time;
-		
-		System.out.println("Elapsed time is " + (double) time / 1000000000.0);
-		
-		System.out.println(pts);
-		System.out.println("Total utilization is " + pts.utilizaton());
-				
-		System.out.println("Elapsed time is " + (double) time / 1000000000.0);
-		assertTrue(pts.utilizaton().compareTo(RMS.llBound(pts.getpTaskSet().size())) > 0) ;
-		assertTrue(pts.utilizaton().compareTo(BigDecimal.ONE) <= 0) ;
-		
-		time = System.nanoTime();
-		assertTrue(TDA.isTDASchedulable(pts, false));
-		time = System.nanoTime() - time;
-		
-		Schedule rmsSchedule = new Schedule();
-		try {
-			rmsSchedule = Essence.schedule(pts, 0, 50, false, jobList -> RMS.hasHighestPriority(jobList), a -> RMS.isSchedulable(a));
-			System.out.println(rmsSchedule);
-			if (!rmsSchedule.isFullyScheduled())
-				System.out.println("A task with id " + rmsSchedule.getViolatedTask() + " violated its deadline at the last time point");
-		} catch (NotSchedulableException e) {
-			System.out.println(e);
-			System.out.println("Failed schedulability tests. If you want to schedule as far as possible, set the onlyIfSchedulable-variable to false.");
-		} catch (InvalidTimeInterval e) {
-			System.out.println(e);
-		}
-		
-	}
-	
 //	@Test
-//	void generateHarmonicTests() {
+//	void generateHardToScheduleTests() {
 //		System.out.println("====================================================================");
-//		System.out.println("Testing rms harmonic task set generation: ");
+//		System.out.println("Testing hard to schedule task set generation: ");
 //		long time = System.nanoTime();
-//		PeriodicTaskSet pts = RMS.generateHarmonicTaskSet(4, 5, 25);
+//		PeriodicTaskSet pts = RMS.generateHardToScheduleTaskSet(5, 5, 25);
 //		time = System.nanoTime() - time;
 //		
 //		System.out.println("Elapsed time is " + (double) time / 1000000000.0);
 //		
 //		System.out.println(pts);
-////		System.out.println("Num tasks is " + pts.getpTaskSet().size());
-////		System.out.println("Liu Layland Bound is : " + RMS.llBound(pts.getpTaskSet().size()));
 //		System.out.println("Total utilization is " + pts.utilizaton());
-//		
-//		assertTrue(RMS.isHarmonicTaskSet(pts));
 //
-////		assertTrue(pts.utilizaton().compareTo(RMS.llBound(pts.getpTaskSet().size())) > 0) ;
+//		assertTrue(pts.utilizaton().compareTo(RMS.llBound(pts.getpTaskSet().size())) > 0) ;
 //		assertTrue(pts.utilizaton().compareTo(BigDecimal.ONE) <= 0) ;
 //		
+//		assertTrue(TDA.isTDASchedulable(pts, false));
+//		
+//		Schedule rmsSchedule = new Schedule();
+//		try {
+//			rmsSchedule = Essence.schedule(pts, 0, 50, false, jobList -> RMS.hasHighestPriority(jobList), a -> RMS.isSchedulable(a));
+//			System.out.println(rmsSchedule);
+//			if (!rmsSchedule.isFullyScheduled())
+//				System.out.println("A task with id " + rmsSchedule.getViolatedTask() + " violated its deadline at the last time point");
+//		} catch (NotSchedulableException e) {
+//			System.out.println(e);
+//			System.out.println("Failed schedulability tests. If you want to schedule as far as possible, set the onlyIfSchedulable-variable to false.");
+//		} catch (InvalidTimeInterval e) {
+//			System.out.println(e);
+//		}
+//		
 //	}
+	
+	@Test
+	void generateHarmonicTests() {
+		System.out.println("====================================================================");
+		System.out.println("Testing rms harmonic task set generation: ");
+		long time = System.nanoTime();
+		PeriodicTaskSet pts = RMS.generateHarmonicTaskSet(10, 2, 80);
+		time = System.nanoTime() - time;
+		
+		System.out.println("Elapsed time is " + (double) time / 1000000000.0);
+		
+		System.out.println(pts);
+//		System.out.println("Num tasks is " + pts.getpTaskSet().size());
+//		System.out.println("Liu Layland Bound is : " + RMS.llBound(pts.getpTaskSet().size()));
+		System.out.println("Total utilization is " + pts.utilizaton());
+		
+		assertTrue(RMS.isHarmonicTaskSet(pts));
+
+//		assertTrue(pts.utilizaton().compareTo(RMS.llBound(pts.getpTaskSet().size())) > 0) ;
+		assertTrue(pts.utilizaton().compareTo(BigDecimal.ONE) <= 0) ;
+		
+	}
 	
 
 }

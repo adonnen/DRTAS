@@ -202,15 +202,14 @@ public class RMS {
 				
 		int newPeriod = Essence.generateRandomInteger(minPeriod, maxPeriod, r);
 		harmonicPeriods.add(newPeriod);
+		int lcmOfExistingPeriods = newPeriod;
 		for (int i = 1; i < numTasks; ++i) {
-			
-			int lcmOfExistingPeriods = newPeriod;
-			for (int num : harmonicPeriods)
-				lcmOfExistingPeriods = Essence.lcm(lcmOfExistingPeriods, num);
-			
 			newPeriod = 	lcmOfExistingPeriods * Essence.generateRandomInteger(1, (maxPeriod/lcmOfExistingPeriods > 1) ? maxPeriod/lcmOfExistingPeriods : 1, r);	
 			harmonicPeriods.add(newPeriod);
+			lcmOfExistingPeriods = Essence.lcm(lcmOfExistingPeriods, newPeriod);
 		}
+		
+		System.out.println("Harmonic periods are: " + harmonicPeriods);
 		
 		boolean wrongUtil;
 		boolean zeroExTimeTask;
@@ -222,12 +221,12 @@ public class RMS {
 			zeroExTimeTask = false;
 			
 			
-			utilizationsList = Essence.generateUtilizations(numTasks, new BigDecimal("50.000"), new BigDecimal(100.00));							
+			utilizationsList = Essence.generateUtilizations(numTasks, RMS.llBound(numTasks), new BigDecimal(100.00));							
 			System.out.println(utilizationsList);
 			
 			try {
 				for (int i = 1; i <= utilizationsList.size(); i++) 
-					pts.addPTask(Essence.generateRandomTask(i, utilizationsList.get(i-1).divide(Essence.HUNDRED), harmonicPeriods.get(i-1)));
+					pts.addPTask(Essence.generateRandomTask(i, utilizationsList.get(i-1), harmonicPeriods.get(i-1)));
 			} catch (Exception e) {
 				System.out.println(e);
 			}
