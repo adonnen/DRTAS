@@ -38,8 +38,8 @@ public class Resource {
 		return priorityCeiling;
 	}
 
-	public void setPriorityCeiling(int priorityCeiling) {
-		this.priorityCeiling = Optional.ofNullable(priorityCeiling);
+	public void setPriorityCeiling(int ceiling) {
+		this.priorityCeiling = Optional.ofNullable(ceiling);
 	}
 	
 	

@@ -3,7 +3,11 @@ package algo.sched;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Function;
 
 import algo.sched.hard.EDF;
@@ -383,6 +387,34 @@ public final class Essence {
 		return maxSoFar;
 	}
 	
+	public static Map<String,Resource> computeResourcePriorityCeilings(PeriodicTaskSet pts) {
+		/*
+		 * This method assumes that pts contains fixed-priority periodic tasks with resources requirements
+		 */
+		Map<String,Resource> resources = new HashMap<String,Resource>();
+		
+		for (PeriodicTask p : pts.getpTaskSet().values())
+			if (p.getRequiredResources().isPresent())
+				 for (ResourceRequirement rr : p.getRequiredResources().get()) {
+					 if (resources.containsKey(rr.r.getName())) {
+						 if (resources.get(rr.r.getName()).getPriorityCeiling().isPresent() &&
+								 rr.r.getPriorityCeiling().get() > resources.get(rr.r.getName()).getPriorityCeiling().get()) 
+							 resources.get(rr.r.getName()).setPriorityCeiling(rr.r.getPriorityCeiling().get());
+					 }
+					 else {
+						 resources.put(rr.r.getName(), rr.r);
+						 resources.get(rr.r.getName()).setPriorityCeiling(p.getPrio());
+					 }
+					 
+				 }	 	
+					 
+		return resources;
+	}
+	
+	
+	
+	
+	// Support functions
 	
 	public static ArrayList<BigDecimal> generateUtilizations (int numTasks, BigDecimal minUtilization, BigDecimal maxUtilization) {
 		ArrayList<BigDecimal> utilizationsList = new ArrayList<BigDecimal>();
